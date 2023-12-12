@@ -9,10 +9,16 @@ type AccessTokenResponse = {
   sub: string;
 };
 
-const currentEnvConfig = dotenv.parse(".env.locale");
+type EnvVars = {
+  CLIENT_ID: string;
+  CLIENT_SECRET: string;
+  CURRENT_ACCESS_TOKEN: string;
+};
+
+const currentEnvConfig = dotenv.config({ path: ".env.local" }).parsed as EnvVars;
 const { CLIENT_ID, CLIENT_SECRET } = currentEnvConfig;
 
-const setAccessToken = async (): Promise<void> => {
+const setClientAccessToken = async (): Promise<void> => {
   try {
     const credentials = `${CLIENT_ID}:${CLIENT_SECRET}`;
     const contentType = "application/x-www-form-urlencoded";
@@ -23,19 +29,13 @@ const setAccessToken = async (): Promise<void> => {
       body: "grant_type=client_credentials",
     });
     const { access_token } = (await response.json()) as AccessTokenResponse;
-
-    debugger;
-
     currentEnvConfig.CURRENT_ACCESS_TOKEN = access_token;
-
     const configText = new URLSearchParams(currentEnvConfig).toString().replace(/&/g, "\n");
 
-    debugger;
-
-    process.env.CURRENT_ACCESS_TOKEN = access_token;
-
-    writeFileSync("../.env.locale", configText, "utf-8");
+    writeFileSync(".env.local", configText, "utf-8");
   } catch (error) {
     console.error(error);
   }
 };
+
+setClientAccessToken();

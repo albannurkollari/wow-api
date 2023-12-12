@@ -27,7 +27,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write",
-    "nodeTS": "node -r ts-node/register --loader ts-node/esm --no-warnings",
+    "nodeTS": "node --inspect-brk -r ts-node/register --loader ts-node/esm --no-warnings",
+    "nodeTS:debug": "pnpm nodeTS --inspect-brk",
     "ts:check": "tsc --noEmit"
   },
   "devDependencies": {
