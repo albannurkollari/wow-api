@@ -27,9 +27,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write",
-    "nodeTS": "node --inspect-brk -r ts-node/register --loader ts-node/esm --no-warnings",
+    "nodeTS": "node -r ts-node/register --loader ts-node/esm --no-warnings",
     "nodeTS:debug": "pnpm nodeTS --inspect-brk",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit",
+    "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",

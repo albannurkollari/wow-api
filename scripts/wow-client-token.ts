@@ -33,6 +33,10 @@ const setClientAccessToken = async (): Promise<void> => {
     const configText = new URLSearchParams(currentEnvConfig).toString().replace(/&/g, "\n");
 
     writeFileSync(".env.local", configText, "utf-8");
+
+    console.log("-----------------------------------------")
+    console.log("| ✅ New client token successfully set! |");
+    console.log("-----------------------------------------")
   } catch (error) {
     console.error(error);
   }
