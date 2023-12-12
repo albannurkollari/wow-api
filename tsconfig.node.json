@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "#constants": ["src/constants"],
+      "#constants/*": ["src/constants/*"]
+    }
   },
-  "include": ["scripts"]
+  "include": ["scripts", "src/constants/**/*.ts"]
 }
