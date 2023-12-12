@@ -1,0 +1,267 @@
+- Aegwynn | aegwynn
+- Aerie Peak | aerie-peak
+- Agamaggan | agamaggan
+- Aggra (Português) | aggra-português
+- Aggramar | aggramar
+- Ahn'Qiraj | ahnqiraj
+- Al'Akir | alakir
+- Alexstrasza | alexstrasza
+- Alleria | alleria
+- Alonsus | alonsus
+- Aman'Thul | amanthul
+- Ambossar | ambossar
+- Anachronos | anachronos
+- Anetheron | anetheron
+- Antonidas | antonidas
+- Anub'arak | anubarak
+- Arak-arahm | arakarahm
+- Arathi | arathi
+- Arathor | arathor
+- Archimonde | archimonde
+- Area 52 | area-52
+- Argent Dawn | argent-dawn
+- Arthas | arthas
+- Arygos | arygos
+- Ashenvale | ashenvale
+- Aszune | aszune
+- Auchindoun | auchindoun
+- Azjol-Nerub | azjolnerub
+- Azshara | azshara
+- Azuregos | azuregos
+- Azuremyst | azuremyst
+- Baelgun | baelgun
+- Balnazzar | balnazzar
+- Blackhand | blackhand
+- Blackmoore | blackmoore
+- Blackrock | blackrock
+- Blackscar | blackscar
+- Blade's Edge | blades-edge
+- Bladefist | bladefist
+- Bloodfeather | bloodfeather
+- Bloodhoof | bloodhoof
+- Bloodscalp | bloodscalp
+- Blutkessel | blutkessel
+- Booty Bay | booty-bay
+- Borean Tundra | borean-tundra
+- Boulderfist | boulderfist
+- Bronze Dragonflight | bronze-dragonflight
+- Bronzebeard | bronzebeard
+- Burning Blade | burning-blade
+- Burning Legion | burning-legion
+- Burning Steppes | burning-steppes
+- C'Thun | cthun
+- Chamber of Aspects | chamber-of-aspects
+- Chants éternels | chants-éternels
+- Cho'gall | chogall
+- Chromaggus | chromaggus
+- Colinas Pardas | colinas-pardas
+- Confrérie du Thorium | confrérie-du-thorium
+- Conseil des Ombres | conseil-des-ombres
+- Crushridge | crushridge
+- Culte de la Rive noire | culte-de-la-rive-noire
+- Daggerspine | daggerspine
+- Dalaran | dalaran
+- Dalvengyr | dalvengyr
+- Darkmoon Faire | darkmoon-faire
+- Darksorrow | darksorrow
+- Darkspear | darkspear
+- Das Konsortium | das-konsortium
+- Das Syndikat | das-syndikat
+- Deathguard | deathguard
+- Deathweaver | deathweaver
+- Deathwing | deathwing
+- Deepholm | deepholm
+- Defias Brotherhood | defias-brotherhood
+- Dentarg | dentarg
+- Der Mithrilorden | der-mithrilorden
+- Der Rat von Dalaran | der-rat-von-dalaran
+- Der abyssische Rat | der-abyssische-rat
+- Destromath | destromath
+- Dethecus | dethecus
+- Die Aldor | die-aldor
+- Die Arguswacht | die-arguswacht
+- Die Nachtwache | die-nachtwache
+- Die Silberne Hand | die-silberne-hand
+- Die Todeskrallen | die-todeskrallen
+- Die ewige Wacht | die-ewige-wacht
+- Doomhammer | doomhammer
+- Draenor | draenor
+- Dragonblight | dragonblight
+- Dragonmaw | dragonmaw
+- Drak'thul | drakthul
+- Drek'Thar | drekthar
+- Dun Modr | dun-modr
+- Dun Morogh | dun-morogh
+- Dunemaul | dunemaul
+- Durotan | durotan
+- Earthen Ring | earthen-ring
+- Echsenkessel | echsenkessel
+- Eitrigg | eitrigg
+- Eldre'Thalas | eldrethalas
+- Elune | elune
+- Emerald Dream | emerald-dream
+- Emeriss | emeriss
+- Eonar | eonar
+- Eredar | eredar
+- Eversong | eversong
+- Executus | executus
+- Exodar | exodar
+- Festung der Stürme | festung-der-stürme
+- Fordragon | fordragon
+- Forscherliga | forscherliga
+- Frostmane | frostmane
+- Frostmourne | frostmourne
+- Frostwhisper | frostwhisper
+- Frostwolf | frostwolf
+- Galakrond | galakrond
+- Garona | garona
+- Garrosh | garrosh
+- Genjuros | genjuros
+- Ghostlands | ghostlands
+- Gilneas | gilneas
+- Goldrinn | goldrinn
+- Gordunni | gordunni
+- Gorgonnash | gorgonnash
+- Greymane | greymane
+- Grim Batol | grim-batol
+- Grom | grom
+- Gul'dan | guldan
+- Hakkar | hakkar
+- Haomarush | haomarush
+- Hellfire | hellfire
+- Hellscream | hellscream
+- Howling Fjord | howling-fjord
+- Hyjal | hyjal
+- Illidan | illidan
+- Jaedenar | jaedenar
+- Kael'thas | kaelthas
+- Karazhan | karazhan
+- Kargath | kargath
+- Kazzak | kazzak
+- Kel'Thuzad | kelthuzad
+- Khadgar | khadgar
+- Khaz Modan | khaz-modan
+- Khaz'goroth | khazgoroth
+- Kil'jaeden | kiljaeden
+- Kilrogg | kilrogg
+- Kirin Tor | kirin-tor
+- Kor'gall | korgall
+- Krag'jin | kragjin
+- Krasus | krasus
+- Kul Tiras | kul-tiras
+- Kult der Verdammten | kult-der-verdammten
+- La Croisade écarlate | la-croisade-écarlate
+- Laughing Skull | laughing-skull
+- Les Clairvoyants | les-clairvoyants
+- Les Sentinelles | les-sentinelles
+- Lich King | lich-king
+- Lightbringer | lightbringer
+- Lightning's Blade | lightnings-blade
+- Lordaeron | lordaeron
+- Los Errantes | los-errantes
+- Lothar | lothar
+- Madmortem | madmortem
+- Magtheridon | magtheridon
+- Mal'Ganis | malganis
+- Malfurion | malfurion
+- Malorne | malorne
+- Malygos | malygos
+- Mannoroth | mannoroth
+- Marécage de Zangar | marécage-de-zangar
+- Mazrigos | mazrigos
+- Medivh | medivh
+- Minahonda | minahonda
+- Moonglade | moonglade
+- Mug'thol | mugthol
+- Nagrand | nagrand
+- Nathrezim | nathrezim
+- Naxxramas | naxxramas
+- Nazjatar | nazjatar
+- Nefarian | nefarian
+- Nemesis | nemesis
+- Neptulon | neptulon
+- Ner'zhul | nerzhul
+- Nera'thor | nerathor
+- Nethersturm | nethersturm
+- Nordrassil | nordrassil
+- Norgannon | norgannon
+- Nozdormu | nozdormu
+- Onyxia | onyxia
+- Outland | outland
+- Perenolde | perenolde
+- Pozzo dell'Eternità | pozzo-delleternità
+- Proudmoore | proudmoore
+- Quel'Thalas | quelthalas
+- Ragnaros | ragnaros
+- Rajaxx | rajaxx
+- Rashgarroth | rashgarroth
+- Ravencrest | ravencrest
+- Ravenholdt | ravenholdt
+- Razuvious | razuvious
+- Rexxar | rexxar
+- Runetotem | runetotem
+- Sanguino | sanguino
+- Sargeras | sargeras
+- Saurfang | saurfang
+- Scarshield Legion | scarshield-legion
+- Sen'jin | senjin
+- Shadowsong | shadowsong
+- Shattered Halls | shattered-halls
+- Shattered Hand | shattered-hand
+- Shattrath | shattrath
+- Shen'dralar | shendralar
+- Silvermoon | silvermoon
+- Sinstralis | sinstralis
+- Skullcrusher | skullcrusher
+- Soulflayer | soulflayer
+- Spinebreaker | spinebreaker
+- Sporeggar | sporeggar
+- Steamwheedle Cartel | steamwheedle-cartel
+- Stormrage | stormrage
+- Stormreaver | stormreaver
+- Stormscale | stormscale
+- Sunstrider | sunstrider
+- Suramar | suramar
+- Sylvanas | sylvanas
+- Taerar | taerar
+- Talnivarr | talnivarr
+- Tarren Mill | tarren-mill
+- Teldrassil | teldrassil
+- Temple noir | temple-noir
+- Terenas | terenas
+- Terokkar | terokkar
+- Terrordar | terrordar
+- The Maelstrom | the-maelstrom
+- The Sha'tar | the-shatar
+- The Venture Co | the-venture-co
+- Theradras | theradras
+- Thermaplugg | thermaplugg
+- Thrall | thrall
+- Throk'Feroth | throkferoth
+- Thunderhorn | thunderhorn
+- Tichondrius | tichondrius
+- Tirion | tirion
+- Todeswache | todeswache
+- Trollbane | trollbane
+- Turalyon | turalyon
+- Twilight's Hammer | twilights-hammer
+- Twisting Nether (3476) | twisting-nether
+- Tyrande | tyrande
+- Uldaman | uldaman
+- Ulduar | ulduar
+- Uldum | uldum
+- Un'Goro | ungoro
+- Varimathras | varimathras
+- Vashj | vashj
+- Vek'lor | veklor
+- Vek'nilash | veknilash
+- Vol'jin | voljin
+- Wildhammer | wildhammer
+- Wrathbringer | wrathbringer
+- Xavius | xavius
+- Ysera | ysera
+- Ysondre | ysondre
+- Zenedar | zenedar
+- Zirkel des Cenarius | zirkel-des-cenarius
+- Zul'jin | zuljin
+- Zuluhed | zuluhed

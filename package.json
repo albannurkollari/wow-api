@@ -1,0 +1,42 @@
+{
+  "name": "wow-api",
+  "private": true,
+  "description": "WoW APIs consumer web app",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Alban Nurkollari",
+  "contributors": [
+    {
+      "name": "Alban Nurkollari",
+      "email": "albannurkollari@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/albannurkollari/wow-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/albannurkollari/wow-api/issues"
+  },
+  "homepage": "https://github.com/albannurkollari/wow-api#readme",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write",
+    "nodeTS": "node -r ts-node/register --loader ts-node/esm --no-warnings",
+    "ts:check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}
