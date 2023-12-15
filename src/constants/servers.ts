@@ -432,4 +432,4 @@ export const CONNECTED_REALMS = [
     id: 3696,
     realms: ["nethersturm", "alexstrasza", "madmortem", "proudmoore"],
   },
-] as const;
+];
