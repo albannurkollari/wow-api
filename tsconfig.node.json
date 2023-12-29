@@ -11,10 +11,10 @@
       "#constants/*": ["src/constants/*"]
     }
   },
-  "include": ["scripts", "src/constants"],
+  "include": ["scripts", "src/constants", "types/*.d.ts"],
   "ts-node": {
     "experimentalSpecifierResolution": "node",
     "transpileOnly": true,
-    "esm": true,
+    "esm": true
   }
 }

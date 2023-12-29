@@ -1,21 +1,17 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import * as prettier from "prettier";
 import dotenv from "dotenv";
+import { File } from "./file";
 
 import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers";
-
-import { kebabCase } from "change-case";
 
 // Constants
 import {
   ACCESS_TOKEN,
   DEFAULT_HEADERS,
-  NAMESPACE,
-  NAMESPACES,
   LOCALE,
   LOCALES,
+  NAMESPACE,
+  NAMESPACES,
 } from "../src/constants/api";
-import path from "node:path";
 
 dotenv.config({ path: ".env.local" });
 
@@ -108,27 +104,6 @@ const grabCheapestItemFromAuctions = ({ auctions = [] } = {}, itemID = LOCAL_ITE
   return smallestBuyoutItem as { buyout: number };
 };
 
-const writeToFile = (() => {
-  async function handleWriteFile(filePath: string, content: string) {
-    try {
-      const directoryPath = path.dirname(filePath);
-
-      await mkdir(directoryPath, { recursive: true });
-      await writeFile(filePath, content, { encoding: "utf-8" });
-
-      console.log(`✅ File created successfully!\n ${filePath}`);
-    } catch (err) {
-      console.error("❌ Error writing to file:", err);
-    }
-  }
-
-  return (jsonData = {}, fileName: string) =>
-    prettier
-      .resolveConfig("./.prettierrc.json")
-      .then((options) => prettier.format(JSON.stringify(jsonData), { ...options, parser: "json" }))
-      .then((data) => handleWriteFile(fileName, data));
-})();
-
 const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
   RealmsWithId & { auctions: any[] }
 > => {
@@ -206,18 +181,20 @@ const startQueries = async () => {
         if (currentItemInfo) {
           currentItemInfo.prices = { cheapest, all: allServerPrices };
 
-          writeToFile(
+          File.async.write(
             currentItemInfo,
-            `./data/auctions/${itemId}-${kebabCase(currentItemInfo.name)}.json`,
+            File.utils.getName(`${itemId}-${currentItemInfo.name}`),
           );
         }
       }
       break;
     }
     case "-i":
-      const item = await grabItemInfo(LOCAL_ITEM_ID, true);
+      {
+        const item = await grabItemInfo(LOCAL_ITEM_ID, true);
 
-      writeToFile(item, `./data/items/${LOCAL_ITEM_ID}-${kebabCase(item.name)}.json`);
+        File.async.write(item, File.utils.getName(`${LOCAL_ITEM_ID}-${item.name}`));
+      }
       break;
     case "-r": {
       try {
@@ -239,7 +216,7 @@ const startQueries = async () => {
           .filter((item) => item.status === "fulfilled")
           .map((item) => item.value);
 
-        writeToFile(realmsData, "./data/realms.json");
+        File.async.write(realmsData, "./data/realms.json");
       } catch (error) {
         console.log(error);
       }

@@ -8,6 +8,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.10.4
     version: 20.10.4
+  '@vitejs/plugin-basic-ssl':
+    specifier: ^1.0.2
+    version: 1.0.2(vite@5.0.8)
   change-case:
     specifier: ^5.3.0
     version: 5.3.0
@@ -464,6 +467,15 @@ packages:
 
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
+    dev: true
+
+  /@vitejs/plugin-basic-ssl@1.0.2(vite@5.0.8):
+    resolution: {integrity: sha512-DKHKVtpI+eA5fvObVgQ3QtTGU70CcCnedalzqmGSR050AzKZMdUzgC8KmlOneHWH8dF2hJ3wkC9+8FDVAaDRCw==}
+    engines: {node: '>=14.6.0'}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    dependencies:
+      vite: 5.0.8(@types/node@20.10.4)
     dev: true
 
   /acorn-jsx@5.3.2(acorn@8.11.2):

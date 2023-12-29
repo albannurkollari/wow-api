@@ -28,13 +28,14 @@
     "preview": "vite preview",
     "format": "prettier --write",
     "nodeTS": "node -r ts-node/register --loader ts-node/esm --no-warnings",
-    "nodeTS:debug": "pnpm nodeTS --inspect-brk",
+    "nodeTS:debug": "pnpm nodeTS --inspect-brk --watch",
     "ts:check": "tsc --noEmit",
     "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts",
     "query": "pnpm nodeTS scripts/wow-queries.ts"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",
+    "@vitejs/plugin-basic-ssl": "^1.0.2",
     "change-case": "^5.3.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.55.0",
