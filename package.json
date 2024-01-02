@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/albannurkollari/wow-api#readme",
   "scripts": {
+    "prepare": "npm run install:hooks",
     "dev": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -31,7 +32,8 @@
     "nodeTS:debug": "pnpm nodeTS --inspect-brk --watch",
     "ts:check": "tsc --noEmit",
     "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts",
-    "query": "pnpm nodeTS scripts/wow-queries.ts"
+    "query": "pnpm nodeTS scripts/wow-queries.ts",
+    "install:hooks": "node scripts/git-hooks.js"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",
