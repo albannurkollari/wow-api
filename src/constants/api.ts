@@ -1,9 +1,6 @@
 // HEADERS
 export const DEFAULT_HEADERS = {
-  headers: { "cache-control": "no-cache" },
-  method: "GET",
-  mode: "cors",
-  credentials: "omit",
+  headers: { "Content-type": 'application/json; charset="utf-8"' },
 } as const;
 
 // PARAMETER NAMES

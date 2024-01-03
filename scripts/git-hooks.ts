@@ -1,5 +1,5 @@
-import { createFileAsync } from "./file";
-import { log } from "./logging";
+import { File } from "./file";
+import { colors } from "./logging";
 
 const updateDependenciesContent = `
 # https://jshakespeare.com/use-git-hooks-and-husky-to-tell-your-teammates-when-to-run-npm-install/
@@ -29,11 +29,11 @@ const paths = {
 };
 
 async function createAdditionalHooks() {
-  await createFileAsync(paths.updateDependencies, updateDependenciesContent);
-  await createFileAsync(paths.postCheckout, hookContent);
-  await createFileAsync(paths.postMerge, hookContent);
+  await File.async.write(paths.updateDependencies, updateDependenciesContent);
+  await File.async.write(paths.postCheckout, hookContent);
+  await File.async.write(paths.postMerge, hookContent);
 
-  log.yellow("\nHappy 🤖 hacking and 🐜 bug hunting! 🚀\n");
+  colors.yellow("\nHappy 🤖 hacking and 🐜 bug hunting! 🚀\n", true);
 }
 
 createAdditionalHooks();

@@ -1,10 +1,12 @@
-import { readFileSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import * as prettier from "prettier";
 import { getRelativeFromCWD } from "./path";
 import * as changeCase from "change-case";
+import { colors } from "./logging";
 
+type TLog = { log: { pre: string; success: string; fail: string } };
 type TOptions = { isRelative?: boolean };
 // type TRead = {
 //   (path: string, options?: TOptions): string;
@@ -41,24 +43,32 @@ function readSync(
 
 /* ASYNC */
 const writeToFile = (() => {
-  async function handleWriteFile(filePath: string, content: string) {
+  async function handleWriteFile(
+    filePath: string,
+    content: string,
+    suppressLog = false,
+  ): Promise<boolean> {
     try {
       const directoryPath = path.dirname(filePath);
 
       await mkdir(directoryPath, { recursive: true });
       await writeFile(filePath, content, { encoding: "utf-8" });
 
-      console.log(`✅ File created successfully!\n ${filePath}`);
+      !suppressLog && console.log(`✅ File created successfully!\n ${filePath}`);
+
+      return true;
     } catch (err) {
       console.error("❌ Error writing to file:", err);
+
+      return false;
     }
   }
 
-  return (jsonData = {}, fileName: string) =>
+  return (jsonData = {}, fileName: string, suppressLog = false) =>
     prettier
       .resolveConfig("./.prettierrc.json")
       .then((options) => prettier.format(JSON.stringify(jsonData), { ...options, parser: "json" }))
-      .then((data) => handleWriteFile(fileName, data));
+      .then((data) => handleWriteFile(fileName, data, suppressLog));
 })();
 
 const getFileName = (() => {
@@ -83,8 +93,36 @@ const getFileName = (() => {
   };
 })();
 
+const folderHasItems = (path: string) => existsSync(path) && !!readdirSync(path).length;
+
+const asyncRemoveFiles = async (
+  path: string,
+  options: Partial<TLog & Parameters<typeof rm>[1]> = {},
+) => {
+  const { log: messages, ...rmOptions } = options ?? {};
+
+  if (messages?.pre) {
+    colors.yellow(`ℹ️ ${messages.pre}`, true);
+  }
+
+  try {
+    await rm(path, { recursive: true, force: true, ...rmOptions });
+
+    if (messages.success) {
+      colors.green(`✅ ${messages.success}`, true);
+    }
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    colors.red(`❌ ${messages.success}`, true);
+
+    return false;
+  }
+};
+
 export const File = {
-  utils: { getName: getFileName },
-  sync: { read: readSync },
-  async: { write: writeToFile },
+  utils: { getName: getFileName, folderHasItems },
+  sync: { read: readSync, exists: existsSync },
+  async: { write: writeToFile, remove: asyncRemoveFiles },
 };
