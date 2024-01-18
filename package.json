@@ -33,7 +33,6 @@
     "ts:check": "tsc --noEmit",
     "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts",
     "query": "pnpm nodeTS scripts/wow.ts",
-    "fb-rares": "pnpm nodeTSscripts/wow-queries.ts --fb-rares",
     "install:hooks": "node scripts/git-hooks.js"
   },
   "devDependencies": {

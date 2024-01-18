@@ -6,8 +6,22 @@ import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers"
 // Constants
 import { ACCESS_TOKEN, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api";
 import { colors } from "./logging";
+import auctionData from "../data/history-auctions.json" assert { type: "json" };
 
 dotenv.config({ path: ".env.local" });
+
+type History = Record<
+  string,
+  Partial<{
+    name: string;
+    price: number;
+    realm: string;
+    timestamp?: Date | string | number;
+    previousPrices?: [number, string, string][];
+    lowest?: number;
+    highest?: number;
+  }>
+>;
 
 type StartQueriesProps = {
   itemIDs: number[];
@@ -131,6 +145,7 @@ export const startQueries = async (props: StartQueriesProps) => {
     case "-c": {
       let item: ItemInfo | undefined;
       let items: ItemInfo[] | undefined;
+      const history = auctionData as History;
 
       if (!!itemIDs?.length) {
         items = await Promise.all(itemIDs.map((id) => grabItemInfo(id)));
@@ -201,11 +216,30 @@ export const startQueries = async (props: StartQueriesProps) => {
           );
 
           amountOfGoldNeeded += Math.round(item.price);
+          history[item.id as string] ||= { previousPrices: [] };
+          const itemHistory = history[item.id];
+          const timestamp = new Date().toLocaleString();
           const isFileWritten = await File.async.write(currentItemInfo, filePath, true);
-          isFileWritten && itemsScanned.push(filePath);
-          isFileWritten && itemsToPrint.push({ ...item, realms: item.realms[0], filePath });
+          if (isFileWritten) {
+            itemsScanned.push(filePath);
+            itemsToPrint.push({ ...item, realms: item.realms[0], filePath });
+            itemHistory.name = item.name;
+            itemHistory.price = item.price;
+            itemHistory.realm = item.realms[0];
+            itemHistory.realm = timestamp;
+            itemHistory.previousPrices.push([item.price, item.realms[0], timestamp]);
+            itemHistory.previousPrices.forEach(([price]) => {
+              const low = itemHistory.lowest ?? itemHistory.previousPrices[0][0];
+              const high = itemHistory.highest ?? itemHistory.previousPrices[0][0];
+
+              itemHistory.lowest = price < low ? price : low;
+              itemHistory.highest = price > high ? price : high;
+            });
+          }
         }
       }
+
+      await File.async.write(history, "data/history-auctions.json");
 
       itemsToPrint.sort(({ price: a, realms: c }, { price: b, realms: d }) =>
         a < b ? -1 : a > b ? 1 : c < d ? -1 : c > d ? 1 : 0,
@@ -218,6 +252,9 @@ export const startQueries = async (props: StartQueriesProps) => {
           colors.bgCyan(`${amountOfGoldNeeded}g`) +
           colors.cyan(" ."),
       );
+
+      colors.brightMagenta("History: ", true);
+      console.table(history);
       break;
     }
     case "-i":
