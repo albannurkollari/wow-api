@@ -118,8 +118,8 @@ const getAllAuctions = async ({
 
     return { ...data, id, realms };
   } catch (err) {
-    console.error(`\x1b[91mError fetching:\x1b[0m ${url}`);
-    console.error(`\x1b[91mReason:\x1b[0m ${err.message}\n`);
+    console.log(colors.red("Error fetching: "), `${url}`);
+    console.log(colors.red("Reason: "), `${err.message}\n`);
 
     return { auctions: [], id: 0, realms: [""] };
   }
@@ -145,7 +145,7 @@ export const startQueries = async (props: StartQueriesProps) => {
     case "-c": {
       let item: ItemInfo | undefined;
       let items: ItemInfo[] | undefined;
-      const history = auctionData as History;
+      const history = auctionData as unknown as History;
 
       if (!!itemIDs?.length) {
         items = await Promise.all(itemIDs.map((id) => grabItemInfo(id)));
@@ -156,7 +156,9 @@ export const startQueries = async (props: StartQueriesProps) => {
       const itemsColl = !!items ? items : [item];
       const itemsPrices = {} as Record<string, (RealmsBuyoutPrice & { id: number })[]>;
       const auctionRealms = isCommodity ? [CONNECTED_REALMS[0]] : CONNECTED_REALMS;
-      const auctionsData = await Promise.all(auctionRealms.map(getAllAuctions));
+      const auctionsData = await Promise.all(
+        auctionRealms.map((item) => getAllAuctions({ ...item, isCommodity, debugLevel })),
+      );
       const hasPrevAuctionsData = File.utils.folderHasItems("./data/auctions");
 
       if (!!auctionsData.length && hasPrevAuctionsData) {
@@ -174,7 +176,11 @@ export const startQueries = async (props: StartQueriesProps) => {
 
         itemsColl.forEach((item) => {
           try {
-            const auction = grabCheapestItemFromAuctions({ auctions, itemID: item.id as number });
+            const auction = grabCheapestItemFromAuctions({
+              auctions,
+              itemID: item.id as number,
+              isCommodity,
+            });
 
             if (!itemsPrices[item.id]) {
               itemsPrices[item.id] = [];
@@ -192,7 +198,6 @@ export const startQueries = async (props: StartQueriesProps) => {
 
       let amountOfGoldNeeded = 0;
       const itemsScanned: string[] = [];
-      const itemsToPrint: Record<string, any>[] = [];
 
       for (const [itemId, item] of Object.entries(itemsPrices)) {
         const [{ id: crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
@@ -216,37 +221,34 @@ export const startQueries = async (props: StartQueriesProps) => {
           );
 
           amountOfGoldNeeded += Math.round(item.price);
-          history[item.id as string] ||= { previousPrices: [] };
-          const itemHistory = history[item.id];
-          const timestamp = new Date().toLocaleString();
-          const isFileWritten = await File.async.write(currentItemInfo, filePath, true);
-          if (isFileWritten) {
-            itemsScanned.push(filePath);
-            itemsToPrint.push({ ...item, realms: item.realms[0], filePath });
-            itemHistory.name = item.name;
-            itemHistory.price = item.price;
-            itemHistory.realm = item.realms[0];
-            itemHistory.realm = timestamp;
-            itemHistory.previousPrices.push([item.price, item.realms[0], timestamp]);
-            itemHistory.previousPrices.forEach(([price]) => {
-              const low = itemHistory.lowest ?? itemHistory.previousPrices[0][0];
-              const high = itemHistory.highest ?? itemHistory.previousPrices[0][0];
 
-              itemHistory.lowest = price < low ? price : low;
-              itemHistory.highest = price > high ? price : high;
-            });
+          if (queryType === "-a") {
+            history[item.id as string] ||= { previousPrices: [] };
+            const itemHistory = history[item.id];
+            const timestamp = new Date().toLocaleString();
+            const isFileWritten = await File.async.write(currentItemInfo, filePath, true);
+            if (isFileWritten) {
+              itemsScanned.push(filePath);
+              itemHistory.name = item.name;
+              itemHistory.realm = item.realms[0];
+              itemHistory.timestamp = timestamp;
+              itemHistory.price = item.price;
+              itemHistory.previousPrices.push([item.price, item.realms[0], timestamp]);
+              itemHistory.previousPrices.forEach(([price]) => {
+                const low = itemHistory.lowest ?? itemHistory.previousPrices[0][0];
+                const high = itemHistory.highest ?? itemHistory.previousPrices[0][0];
+
+                itemHistory.lowest = price < low ? price : low;
+                itemHistory.highest = price > high ? price : high;
+              });
+            }
           }
         }
       }
 
       await File.async.write(history, "data/history-auctions.json");
 
-      itemsToPrint.sort(({ price: a, realms: c }, { price: b, realms: d }) =>
-        a < b ? -1 : a > b ? 1 : c < d ? -1 : c > d ? 1 : 0,
-      );
-
       colors.green("✅ Files created successfully!", true);
-      console.table(itemsToPrint);
       console.log(
         colors.cyan("Total amount of gold needed: ") +
           colors.bgCyan(`${amountOfGoldNeeded}g`) +
@@ -254,7 +256,11 @@ export const startQueries = async (props: StartQueriesProps) => {
       );
 
       colors.brightMagenta("History: ", true);
-      console.table(history);
+      const sortedHistoryByPrice = Object.entries(history)
+        .sort(([, { price: a }], [, { price: b }]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([id, { previousPrices, ...rest }]) => ({ ...rest, id }));
+
+      console.table(sortedHistoryByPrice);
       break;
     }
     case "-i":

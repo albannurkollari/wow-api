@@ -1,5 +1,40 @@
 import { camelCase } from "change-case";
-import { CamelCase, ComputeRange, GetRange } from "./typeHelpers";
+import { CamelCase, ComputeRange, FindKeyInStringLiteral, GetRange } from "./typeHelpers";
+
+const Codes = {
+  30: "\x1b[30m",
+  31: "\x1b[31m",
+  32: "\x1b[32m",
+  33: "\x1b[33m",
+  34: "\x1b[34m",
+  35: "\x1b[35m",
+  36: "\x1b[36m",
+  37: "\x1b[37m",
+  40: "\x1b[40m",
+  41: "\x1b[41m",
+  42: "\x1b[42m",
+  43: "\x1b[43m",
+  44: "\x1b[44m",
+  45: "\x1b[45m",
+  46: "\x1b[46m",
+  47: "\x1b[47m",
+  90: "\x1b[90m",
+  91: "\x1b[91m",
+  92: "\x1b[92m",
+  93: "\x1b[93m",
+  94: "\x1b[94m",
+  95: "\x1b[95m",
+  96: "\x1b[96m",
+  97: "\x1b[97m",
+  100: "\x1b[100m",
+  101: "\x1b[101m",
+  102: "\x1b[102m",
+  103: "\x1b[103m",
+  104: "\x1b[104m",
+  105: "\x1b[105m",
+  106: "\x1b[106m",
+  107: "\x1b[107m",
+} as const;
 
 export const colors = (() => {
   const escape = "\x1b[";
@@ -28,6 +63,7 @@ export const colors = (() => {
   type AllColorCodes = `${typeof escape}${FGColorNumbers | BGColorNumbers}m`;
   type FGColorNames = keyof typeof COLORS;
   type BGColorNames = `bg${CamelCase<FGColorNames>}`;
+  type GrabColorCode<T extends string | number> = FindKeyInStringLiteral<AllColorCodes, T>;
 
   const getCodeCB = (codeNumber: FGColorNumbers | BGColorNumbers) => {
     const code = `${escape}${codeNumber}m`;
@@ -39,7 +75,8 @@ export const colors = (() => {
       return msg;
     };
 
-    cb.code = code as AllColorCodes;
+    // cb.code = code as GrabColorCode<`${typeof codeNumber}`>;
+    cb.code = Codes[codeNumber];
 
     return cb;
   };

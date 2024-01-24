@@ -12,3 +12,7 @@ export type UppercaseFirstLetter<S extends string> = S extends `${infer First}${
 export type CamelCase<S extends string> = S extends `${infer Prefix}_${infer Suffix}`
   ? `${UppercaseFirstLetter<Prefix>}${CamelCase<Suffix>}`
   : UppercaseFirstLetter<S>;
+export type FindKeyInStringLiteral<
+  Union,
+  KeyPart extends string | number,
+> = Union extends `${infer _}${KeyPart}${infer _}` ? Union : never;
