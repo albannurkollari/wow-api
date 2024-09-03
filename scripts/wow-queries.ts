@@ -85,6 +85,10 @@ const grabCheapestItemFromAuctions = ({
   let smallestBuyout = Number.POSITIVE_INFINITY;
 
   for (const auction of auctions) {
+    if (!auction.item || !auction.item.id) {
+      continue;
+    }
+
     if (auction.item.id === itemID) {
       const priceProp = isCommodity ? "unit_price" : "buyout";
 
@@ -134,7 +138,9 @@ const grabItemInfo = async (id: number, rawInfo = false): Promise<ItemInfo> => {
     if (rawInfo) return result;
 
     return { id, name, description, prices: {} };
-  } catch (error) {}
+  } catch (error) {
+    console.log(error, "\n Error fetching item info!");
+  }
 };
 
 export const startQueries = async (props: StartQueriesProps) => {
@@ -200,6 +206,8 @@ export const startQueries = async (props: StartQueriesProps) => {
       const itemsScanned: string[] = [];
 
       for (const [itemId, item] of Object.entries(itemsPrices)) {
+        if (!item.length) continue;
+
         const [{ id: crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const currentItemInfo = itemsColl.find((item) => item.id === parseInt(itemId));
         const allServerPrices = item.reduce(
@@ -292,7 +300,7 @@ export const startQueries = async (props: StartQueriesProps) => {
 
         File.async.write(realmsData, "./data/realms.json");
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
 
       break;
