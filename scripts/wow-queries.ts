@@ -34,6 +34,10 @@ type ItemAuctionsProps = { auctions: any[]; itemID: number } & Pick<
   "isCommodity"
 >;
 type GetAllAuctionsProps = RealmsWithId & Pick<StartQueriesProps, "debugLevel" | "isCommodity">;
+type StringOrNA = (string & {}) | "N/A";
+
+const getRealmNames = (id: number): StringOrNA =>
+  CONNECTED_REALMS.find((realm) => realm.id === id)?.realms.join(", ") ?? "N/A";
 
 const getCommonParams = (accessToken: string, namespace: Namespace, region: Region) =>
   new URLSearchParams({
@@ -115,6 +119,7 @@ const getAllAuctions = async ({
 }: Partial<GetAllAuctionsProps> = {}): Promise<RealmsWithId & { auctions: any[] }> => {
   const method = isCommodity ? "commodities" : "auctions";
   const url = craftWoWURLWithToken(method, { crID: id });
+  const realNames = getRealmNames(id);
   debugLevel > 0 && colors.brightYellow(url, true);
 
   try {
@@ -122,7 +127,7 @@ const getAllAuctions = async ({
 
     return { ...data, id, realms };
   } catch (err) {
-    console.log(colors.red("Error fetching: "), `${url}`);
+    console.log(colors.red("Error fetching auction data for: "), realNames);
     console.log(colors.red("Reason: "), `${err.message}\n`);
 
     return { auctions: [], id: 0, realms: [""] };
@@ -206,7 +211,9 @@ export const startQueries = async (props: StartQueriesProps) => {
       const itemsScanned: string[] = [];
 
       for (const [itemId, item] of Object.entries(itemsPrices)) {
-        if (!item.length) continue;
+        if (!item.length) {
+          item.push({ id: parseInt(itemId), buyout: 0, realms: ["N/A"] });
+        }
 
         const [{ id: crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const currentItemInfo = itemsColl.find((item) => item.id === parseInt(itemId));
