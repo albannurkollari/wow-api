@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "composite": true,
     "skipLibCheck": true,
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,

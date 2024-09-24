@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "author": "Alban Nurkollari",
   "contributors": [
@@ -33,17 +33,18 @@
     "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts",
     "query": "pnpm nodeTS scripts/wow.ts",
     "query:debug": "pnpm nodeTS:debug scripts/wow.ts",
+    "qq": "pnpm nodeTS scripts/wow-char.ts",
     "install:hooks": "node scripts/git-hooks.js"
   },
   "devDependencies": {
-    "@types/node": "^20.11.6",
+    "@types/node": "^22.6.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
-    "change-case": "^5.4.2",
-    "dotenv": "^16.4.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.4",
+    "change-case": "^5.4.4",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.11.1",
+    "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "typescript": "^5.6.2",
+    "vite": "^5.4.7"
   }
 }
