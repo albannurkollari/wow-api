@@ -1,4 +1,6 @@
 import data from "./data.json" with { type: "json" };
+import khazAlgarEngineeringData from "./engineering.json" with { type: "json" };
+import recipe from "./engineering-recipe.json" with { type: "json" };
 
 const getErenndrielProfessions = async () => {
   return fetch(
@@ -30,4 +32,26 @@ const obj = {
   ),
 };
 
-console.log(JSON.stringify(obj, null, 2));
+// console.log(primary.profession.id, primary.tiers.at(-1).tier.id);
+// console.log(secondary.profession.id, secondary.tiers.at(-1).tier.id);
+// console.log(JSON.stringify(obj, null, 2));
+debugger;
+
+const knownEngineeringIds = Object.keys(obj[primary.profession.name]).map(Number);
+
+const aa = khazAlgarEngineeringData.categories.reduce(
+  (acc, { recipes }) => {
+    const t = recipes.filter((recipe) => !knownEngineeringIds.includes(recipe.id));
+    acc.push(...t);
+
+    return acc;
+  },
+  [] as { key: { href: string }; name: string; id: number }[],
+);
+
+const bb = aa.reduce(
+  (acc, { key, name, id }) => ({ ...acc, [id]: { link: key.href, name } }),
+  {} as Record<number, { link: string; name: string }>,
+);
+
+console.log(JSON.stringify(bb, null, 2));

@@ -1,0 +1,605 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://eu.api.blizzard.com/data/wow/profession/202/skill-tier/2875?namespace=static-11.0.2_55938-eu"
+    }
+  },
+  "id": 2875,
+  "name": "Khaz Algar Engineering",
+  "minimum_skill_level": 1,
+  "maximum_skill_level": 100,
+  "categories": [
+    {
+      "name": "Recrafting",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49181?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Recraft Equipment",
+          "id": 49181
+        }
+      ]
+    },
+    {
+      "name": "Competitor's Crafts (PvP)",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49935?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Cloth Goggles",
+          "id": 49935
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49936?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Leather Goggles",
+          "id": 49936
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49937?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Mail Goggles",
+          "id": 49937
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49938?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Plate Goggles",
+          "id": 49938
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49939?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Cloth Bracers",
+          "id": 49939
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49940?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Leather Bracers",
+          "id": 49940
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49941?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Mail Bracers",
+          "id": 49941
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/49942?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Plate Bracers",
+          "id": 49942
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51269?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Competitor's Rifle",
+          "id": 51269
+        }
+      ]
+    },
+    {
+      "name": "Devices",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50198?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Stonebound Lantern",
+          "id": 50198
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50839?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Irresistible Red Button",
+          "id": 50839
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50840?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Pausing Pylon",
+          "id": 50840
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50841?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Convincingly Realistic Jumper Cables",
+          "id": 50841
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50842?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Algari Repair Bot 11O",
+          "id": 50842
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50843?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Portable Profession Possibility Projector",
+          "id": 50843
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50844?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Barrel of Fireworks",
+          "id": 50844
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50845?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Defective Escape Pod",
+          "id": 50845
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50846?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Filmless Camera",
+          "id": 50846
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50847?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Wormhole Generator: Khaz Algar",
+          "id": 50847
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50848?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Crowd Pummeler 2-30",
+          "id": 50848
+        }
+      ]
+    },
+    {
+      "name": "Tinker's Essentials",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50785?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Scour Through Scrap",
+          "id": 50785
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50786?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Pilfer Through Parts",
+          "id": 50786
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50787?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Invent",
+          "id": 50787
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50788?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Disassemble Invention",
+          "id": 50788
+        }
+      ]
+    },
+    {
+      "name": "Geared For Combat",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50789?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Studious Brilliance Expeditor",
+          "id": 50789
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50790?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Overclocked Idea Generator",
+          "id": 50790
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50791?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Supercharged Thought Enhancer",
+          "id": 50791
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50792?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Dangerous Distraction Inhibitor",
+          "id": 50792
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50793?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Blasting Bracers",
+          "id": 50793
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50794?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Venting Vambraces",
+          "id": 50794
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50795?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Whirring Wristwraps",
+          "id": 50795
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50796?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Clanking Cuffs",
+          "id": 50796
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50827?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "P.0.W. x2",
+          "id": 50827
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51276?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Acolyte's Goggles",
+          "id": 51276
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51277?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Spelunker's Goggles",
+          "id": 51277
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51278?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Tracker's Goggles",
+          "id": 51278
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51279?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Dredger's Goggles",
+          "id": 51279
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51280?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "4UT0-41M3R",
+          "id": 51280
+        }
+      ]
+    },
+    {
+      "name": "Profession Equipment",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50797?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Spring-Loaded Bismuth Fabric Cutters",
+          "id": 50797
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50798?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Spring-Loaded Aqirite Fabric Cutters",
+          "id": 50798
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50799?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Bismuth Brainwave Projector",
+          "id": 50799
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50800?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Aqirite Brainwave Projector",
+          "id": 50800
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50801?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Bismuth Fisherfriend",
+          "id": 50801
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50802?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Aqirite Fisherfriend",
+          "id": 50802
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50803?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Lapidary's Bismuth Clamps",
+          "id": 50803
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50804?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Lapidary's Aqirite Clamps",
+          "id": 50804
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50805?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Bismuth Miner's Headgear",
+          "id": 50805
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50806?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Aqirite Miner's Headgear",
+          "id": 50806
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50807?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Bismuth Fueled Samophlange",
+          "id": 50807
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50808?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Aqirite Fueled Samophlange",
+          "id": 50808
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50809?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Miner's Bismuth Hoard",
+          "id": 50809
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50810?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Miner's Aqirite Hoard",
+          "id": 50810
+        }
+      ]
+    },
+    {
+      "name": "Parts",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50811?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Handful of Bismuth Bolts",
+          "id": 50811
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50812?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Whimsical Wiring",
+          "id": 50812
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50813?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Gyrating Gear",
+          "id": 50813
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50814?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Safety Switch",
+          "id": 50814
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50815?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Chaos Circuit",
+          "id": 50815
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50816?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Entropy Enhancer",
+          "id": 50816
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51329?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Bottled Brilliance",
+          "id": 51329
+        }
+      ]
+    },
+    {
+      "name": "Explosives",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50817?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Potion Bomb of Speed",
+          "id": 50817
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50818?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Potion Bomb of Recovery",
+          "id": 50818
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50819?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Potion Bomb of Power",
+          "id": 50819
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/51214?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Box o' Booms",
+          "id": 51214
+        }
+      ]
+    },
+    {
+      "name": "Tinkers",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50825?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Tinker: Earthen Delivery Drill",
+          "id": 50825
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50826?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Tinker: Heartseeking Health Injector",
+          "id": 50826
+        }
+      ]
+    },
+    {
+      "name": "Cogwheels",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50828?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Serrated Cogwheel",
+          "id": 50828
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50829?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Overclocked Cogwheel",
+          "id": 50829
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50830?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Impeccable Cogwheel",
+          "id": 50830
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50831?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Adjustable Cogwheel",
+          "id": 50831
+        }
+      ]
+    },
+    {
+      "name": "Safety Components",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50832?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Recalibrated Safety Switch",
+          "id": 50832
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50833?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Blame Redirection Device",
+          "id": 50833
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50835?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Complicated Fuse Box",
+          "id": 50835
+        }
+      ]
+    },
+    {
+      "name": "Embellishments",
+      "recipes": [
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50836?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Pouch of Pocket Grenades",
+          "id": 50836
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50837?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Concealed Chaos Module",
+          "id": 50837
+        },
+        {
+          "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/recipe/50838?namespace=static-11.0.2_55938-eu"
+          },
+          "name": "Energy Redistribution Beacon",
+          "id": 50838
+        }
+      ]
+    }
+  ]
+}

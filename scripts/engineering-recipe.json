@@ -1,0 +1,79 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://eu.api.blizzard.com/data/wow/recipe/50831?namespace=static-11.0.2_55938-eu"
+    }
+  },
+  "id": 50831,
+  "name": "Adjustable Cogwheel",
+  "media": {
+    "key": {
+      "href": "https://eu.api.blizzard.com/data/wow/media/recipe/50831?namespace=static-11.0.2_55938-eu"
+    },
+    "id": 50831
+  },
+  "reagents": [
+    {
+      "reagent": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/item/212508?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Stunning Sapphire",
+        "id": 212508
+      },
+      "quantity": 1
+    }
+  ],
+  "modified_crafting_slots": [
+    {
+      "slot_type": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/304?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Handful of Bismuth Bolts",
+        "id": 304
+      },
+      "display_order": 0
+    },
+    {
+      "slot_type": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/306?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Gyrating Gear",
+        "id": 306
+      },
+      "display_order": 1
+    },
+    {
+      "slot_type": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/309?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Entropy Enhancer",
+        "id": 309
+      },
+      "display_order": 2
+    },
+    {
+      "slot_type": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/347?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Spare Parts",
+        "id": 347
+      },
+      "display_order": 3
+    },
+    {
+      "slot_type": {
+        "key": {
+          "href": "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/346?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Artisan's Authenticity",
+        "id": 346
+      },
+      "display_order": 4
+    }
+  ]
+}

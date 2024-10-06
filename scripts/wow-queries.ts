@@ -6,7 +6,7 @@ import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers"
 // Constants
 import { ACCESS_TOKEN, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api";
 import { colors } from "./logging";
-import auctionData from "../data/history-auctions.json" assert { type: "json" };
+import auctionData from "../data/history-auctions.json" with { type: "json" };
 
 dotenv.config({ path: ".env.local" });
 
