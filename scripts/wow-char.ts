@@ -35,7 +35,6 @@ const obj = {
 // console.log(primary.profession.id, primary.tiers.at(-1).tier.id);
 // console.log(secondary.profession.id, secondary.tiers.at(-1).tier.id);
 // console.log(JSON.stringify(obj, null, 2));
-debugger;
 
 const knownEngineeringIds = Object.keys(obj[primary.profession.name]).map(Number);
 
