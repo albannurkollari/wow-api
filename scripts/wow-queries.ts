@@ -6,6 +6,8 @@ import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.
 
 import { kebabCase } from "change-case";
 
+import { formatCheapestReport } from "./report.ts";
+
 // Constants
 import { DEFAULT_HEADERS, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api.ts";
 import path from "node:path";
@@ -198,9 +200,24 @@ const startQueries = async () => {
         });
       });
 
+      const reports: string[] = [];
+
       for (const [itemId, item] of Object.entries(itemsPrices)) {
-        const [{ id: _crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const currentItemInfo = itemsColl.find((item) => item.id === parseInt(itemId));
+
+        if (currentItemInfo) {
+          reports.push(
+            formatCheapestReport(currentItemInfo, {
+              listings: item,
+              totalRealms: auctionRealms.length,
+              isCommodity: IS_COMMODITY,
+            }),
+          );
+        }
+
+        if (!item.length) continue;
+
+        const [{ id: _crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const allServerPrices = item.reduce(
           (acc, { id, ...rest }) => ({ ...acc, [id]: rest }),
           {} as Record<string, RealmsBuyoutPrice>,
@@ -215,6 +232,8 @@ const startQueries = async () => {
           );
         }
       }
+
+      console.log(`\n${reports.join("\n\n")}`);
       break;
     }
     case "-i":
