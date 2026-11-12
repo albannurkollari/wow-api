@@ -7,14 +7,7 @@ import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.
 import { kebabCase } from "change-case";
 
 // Constants
-import {
-  ACCESS_TOKEN,
-  DEFAULT_HEADERS,
-  NAMESPACE,
-  NAMESPACES,
-  LOCALE,
-  LOCALES,
-} from "../src/constants/api.ts";
+import { DEFAULT_HEADERS, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api.ts";
 import path from "node:path";
 
 dotenv.config({ path: ".env.local", quiet: true });
@@ -38,40 +31,44 @@ type ItemInfo = {
   prices: { cheapest?: RealmsBuyoutPrice | number; all?: Record<string, RealmsBuyoutPrice> };
 };
 
-const getCommonParams = (accessToken: string, namespace: Namespace, region: Region) =>
+// Blizzard only accepts the access token as a Bearer header; a query string token gets a bare 404.
+const REQUEST_INIT = {
+  ...DEFAULT_HEADERS,
+  headers: {
+    ...DEFAULT_HEADERS.headers,
+    authorization: `Bearer ${process.env.CURRENT_ACCESS_TOKEN}`,
+  },
+};
+
+const getCommonParams = (namespace: Namespace, region: Region) =>
   new URLSearchParams({
     [NAMESPACE]: `${namespace}-${region}`,
     [LOCALE]: LOCALES.EN_GB,
-    [ACCESS_TOKEN]: accessToken,
   }).toString();
 
-const craftWoWURLWithToken = (
-  type: WoWQueryType,
-  { crID, itemID, region = "eu" }: WoWURLOptions = {},
-) => {
-  const accessToken = process.env.CURRENT_ACCESS_TOKEN;
+const craftWoWURL = (type: WoWQueryType, { crID, itemID, region = "eu" }: WoWURLOptions = {}) => {
   const _url = new URL(`https://${region}.api.blizzard.com/`);
   const basePath = "/data/wow";
 
   switch (type) {
     case "auctions": {
       _url.pathname = `${basePath}/connected-realm/${crID}/auctions`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
     case "commodities": {
       _url.pathname = `${basePath}/auctions/commodities`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
     case "item": {
       _url.pathname = `${basePath}/item/${itemID}`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.STATIC, region);
+      _url.search = getCommonParams(NAMESPACES.STATIC, region);
       break;
     }
     case "realms": {
       _url.pathname = `${basePath}/connected-realm/${crID}`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
   }
@@ -136,10 +133,10 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
   RealmsWithId & { auctions: any[] }
 > => {
   const method = IS_COMMODITY ? "commodities" : "auctions";
-  const url = craftWoWURLWithToken(method, { crID: id });
+  const url = craftWoWURL(method, { crID: id });
   if (DEBUG_LEVEL > 0) console.log(url);
 
-  return fetch(url, DEFAULT_HEADERS)
+  return fetch(url, REQUEST_INIT)
     .then((response) => response.json() as Promise<{ auctions: any[] }>)
     .then((data) => ({ ...data, id, realms }))
     .catch((error) => {
@@ -150,8 +147,8 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
 
 const grabItemInfo = async (id: number = LOCAL_ITEM_ID, rawInfo = false): Promise<ItemInfo> => {
   try {
-    const url = craftWoWURLWithToken("item", { itemID: id });
-    const result = (await (await fetch(url, DEFAULT_HEADERS)).json()) as ItemInfo;
+    const url = craftWoWURL("item", { itemID: id });
+    const result = (await (await fetch(url, REQUEST_INIT)).json()) as ItemInfo;
     const { name, description } = result;
 
     if (rawInfo) return result;
@@ -229,9 +226,9 @@ const startQueries = async () => {
       try {
         const realmsResponse = await Promise.allSettled<{ id: number; realms: string[] }>(
           CONNECTED_REALM_IDS.map((crID) => {
-            const url = craftWoWURLWithToken("realms", { crID });
+            const url = craftWoWURL("realms", { crID });
 
-            return fetch(url, DEFAULT_HEADERS)
+            return fetch(url, REQUEST_INIT)
               .then((res) => res.json() as Promise<{ id: number; realms: { slug: string }[] }>)
               .then((res) => ({ id: res.id, realms: res.realms.map(({ slug }) => slug) }));
           }),
