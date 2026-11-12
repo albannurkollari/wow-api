@@ -1,5 +1,5 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import * as prettier from "prettier";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { format } from "oxfmt";
 import dotenv from "dotenv";
 
 import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.ts";
@@ -123,10 +123,13 @@ const writeToFile = (() => {
   }
 
   return (jsonData = {}, fileName: string) =>
-    prettier
-      .resolveConfig("./.prettierrc.json")
-      .then((options) => prettier.format(JSON.stringify(jsonData), { ...options, parser: "json" }))
-      .then((data) => handleWriteFile(fileName, data));
+    readFile("./.oxfmtrc.json", "utf-8")
+      .then((config) => {
+        const { $schema: _, ignorePatterns: __, ...options } = JSON.parse(config);
+
+        return format(fileName, JSON.stringify(jsonData), options);
+      })
+      .then(({ code }) => handleWriteFile(fileName, code));
 })();
 
 const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<

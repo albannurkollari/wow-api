@@ -26,7 +26,8 @@
     "dev": "vite --host",
     "build": "pnpm typecheck && vite build",
     "preview": "vite preview",
-    "format": "prettier --write",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
     "nodeTS": "node",
     "nodeTS:debug": "node --inspect-brk",
@@ -37,7 +38,7 @@
     "@types/node": "^26.6.6",
     "change-case": "^5.4.4",
     "dotenv": "^18.0.10",
-    "prettier": "^3.9.10",
+    "oxfmt": "^0.78.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.8"
   }

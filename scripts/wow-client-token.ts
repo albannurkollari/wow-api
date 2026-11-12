@@ -34,9 +34,9 @@ const setClientAccessToken = async (): Promise<void> => {
 
     writeFileSync(".env.local", configText, "utf-8");
 
-    console.log("-----------------------------------------")
+    console.log("-----------------------------------------");
     console.log("| ✅ New client token successfully set! |");
-    console.log("-----------------------------------------")
+    console.log("-----------------------------------------");
   } catch (error) {
     console.error(error);
   }
