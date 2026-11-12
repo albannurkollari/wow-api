@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import * as prettier from "prettier";
 import dotenv from "dotenv";
 
-import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers";
+import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.ts";
 
 import { kebabCase } from "change-case";
 
@@ -14,10 +14,10 @@ import {
   NAMESPACES,
   LOCALE,
   LOCALES,
-} from "../src/constants/api";
+} from "../src/constants/api.ts";
 import path from "node:path";
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env.local", quiet: true });
 
 type Namespace = "dynamic" | "static" | "profile";
 type Region = "eu" | "us";
@@ -137,7 +137,7 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
   DEBUG_LEVEL > 0 && console.log(url);
 
   return fetch(url, DEFAULT_HEADERS)
-    .then((response) => response.json())
+    .then((response) => response.json() as Promise<{ auctions: any[] }>)
     .then((data) => ({ ...data, id, realms }))
     .catch((error) => {
       console.error(error);
@@ -148,7 +148,7 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
 const grabItemInfo = async (id: number = LOCAL_ITEM_ID, rawInfo = false): Promise<ItemInfo> => {
   try {
     const url = craftWoWURLWithToken("item", { itemID: id });
-    const result = await (await fetch(url, DEFAULT_HEADERS)).json();
+    const result = (await (await fetch(url, DEFAULT_HEADERS)).json()) as ItemInfo;
     const { name, description } = result;
 
     if (rawInfo) return result;
@@ -229,7 +229,7 @@ const startQueries = async () => {
             const url = craftWoWURLWithToken("realms", { crID });
 
             return fetch(url, DEFAULT_HEADERS)
-              .then((res) => res.json())
+              .then((res) => res.json() as Promise<{ id: number; realms: { slug: string }[] }>)
               .then((res) => ({ id: res.id, realms: res.realms.map(({ slug }) => slug) }));
           }),
         );
