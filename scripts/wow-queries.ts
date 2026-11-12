@@ -1,23 +1,18 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import * as prettier from "prettier";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { format } from "oxfmt";
 import dotenv from "dotenv";
 
-import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers";
+import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.ts";
 
 import { kebabCase } from "change-case";
 
+import { formatCheapestReport } from "./report.ts";
+
 // Constants
-import {
-  ACCESS_TOKEN,
-  DEFAULT_HEADERS,
-  NAMESPACE,
-  NAMESPACES,
-  LOCALE,
-  LOCALES,
-} from "../src/constants/api";
+import { DEFAULT_HEADERS, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api.ts";
 import path from "node:path";
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env.local", quiet: true });
 
 type Namespace = "dynamic" | "static" | "profile";
 type Region = "eu" | "us";
@@ -38,40 +33,44 @@ type ItemInfo = {
   prices: { cheapest?: RealmsBuyoutPrice | number; all?: Record<string, RealmsBuyoutPrice> };
 };
 
-const getCommonParams = (accessToken: string, namespace: Namespace, region: Region) =>
+// Blizzard only accepts the access token as a Bearer header; a query string token gets a bare 404.
+const REQUEST_INIT = {
+  ...DEFAULT_HEADERS,
+  headers: {
+    ...DEFAULT_HEADERS.headers,
+    authorization: `Bearer ${process.env.CURRENT_ACCESS_TOKEN}`,
+  },
+};
+
+const getCommonParams = (namespace: Namespace, region: Region) =>
   new URLSearchParams({
     [NAMESPACE]: `${namespace}-${region}`,
     [LOCALE]: LOCALES.EN_GB,
-    [ACCESS_TOKEN]: accessToken,
   }).toString();
 
-const craftWoWURLWithToken = (
-  type: WoWQueryType,
-  { crID, itemID, region = "eu" }: WoWURLOptions = {},
-) => {
-  const accessToken = process.env.CURRENT_ACCESS_TOKEN;
+const craftWoWURL = (type: WoWQueryType, { crID, itemID, region = "eu" }: WoWURLOptions = {}) => {
   const _url = new URL(`https://${region}.api.blizzard.com/`);
   const basePath = "/data/wow";
 
   switch (type) {
     case "auctions": {
       _url.pathname = `${basePath}/connected-realm/${crID}/auctions`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
     case "commodities": {
       _url.pathname = `${basePath}/auctions/commodities`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
     case "item": {
       _url.pathname = `${basePath}/item/${itemID}`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.STATIC, region);
+      _url.search = getCommonParams(NAMESPACES.STATIC, region);
       break;
     }
     case "realms": {
       _url.pathname = `${basePath}/connected-realm/${crID}`;
-      _url.search = getCommonParams(accessToken, NAMESPACES.DYNAMIC, region);
+      _url.search = getCommonParams(NAMESPACES.DYNAMIC, region);
       break;
     }
   }
@@ -123,35 +122,41 @@ const writeToFile = (() => {
   }
 
   return (jsonData = {}, fileName: string) =>
-    prettier
-      .resolveConfig("./.prettierrc.json")
-      .then((options) => prettier.format(JSON.stringify(jsonData), { ...options, parser: "json" }))
-      .then((data) => handleWriteFile(fileName, data));
+    readFile("./.oxfmtrc.json", "utf-8")
+      .then((config) => {
+        const { $schema: _, ignorePatterns: __, ...options } = JSON.parse(config);
+
+        return format(fileName, JSON.stringify(jsonData), options);
+      })
+      .then(({ code }) => handleWriteFile(fileName, code));
 })();
 
 const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
   RealmsWithId & { auctions: any[] }
 > => {
   const method = IS_COMMODITY ? "commodities" : "auctions";
-  const url = craftWoWURLWithToken(method, { crID: id });
-  DEBUG_LEVEL > 0 && console.log(url);
+  const url = craftWoWURL(method, { crID: id });
+  if (DEBUG_LEVEL > 0) console.log(url);
 
-  return fetch(url, DEFAULT_HEADERS)
-    .then((response) => response.json())
+  return fetch(url, REQUEST_INIT)
+    .then((response) => response.json() as Promise<{ auctions: any[] }>)
     .then((data) => ({ ...data, id, realms }))
-    .catch(console.error);
+    .catch((error) => {
+      console.error(error);
+      return { id, realms, auctions: [] };
+    });
 };
 
 const grabItemInfo = async (id: number = LOCAL_ITEM_ID, rawInfo = false): Promise<ItemInfo> => {
   try {
-    const url = craftWoWURLWithToken("item", { itemID: id });
-    const result = await (await fetch(url, DEFAULT_HEADERS)).json();
+    const url = craftWoWURL("item", { itemID: id });
+    const result = (await (await fetch(url, REQUEST_INIT)).json()) as ItemInfo;
     const { name, description } = result;
 
     if (rawInfo) return result;
 
     return { id, name, description, prices: {} };
-  } catch (error) {}
+  } catch {}
 };
 
 const startQueries = async () => {
@@ -161,7 +166,7 @@ const startQueries = async () => {
       let item: ItemInfo | undefined;
       let items: ItemInfo[] | undefined;
 
-      if (!!LOCAL_ITEM_IDS?.length) {
+      if (LOCAL_ITEM_IDS?.length) {
         items = await Promise.all(LOCAL_ITEM_IDS.map((id) => grabItemInfo(id)));
         items.forEach((item) => {
           console.log(`--> Fetching prices across all EU servers for item:\n ${item.name}!\n`);
@@ -171,7 +176,7 @@ const startQueries = async () => {
         console.log(`--> Fetching prices across all EU servers for item:\n ${item.name}!\n`);
       }
 
-      const itemsColl = !!items ? items : [item];
+      const itemsColl = items ? items : [item];
       const itemsPrices = {} as Record<string, (RealmsBuyoutPrice & { id: number })[]>;
       const auctionRealms = IS_COMMODITY ? [CONNECTED_REALMS[0]] : CONNECTED_REALMS;
       const auctionsData = await Promise.all(auctionRealms.map(getAllAuctions));
@@ -185,7 +190,7 @@ const startQueries = async () => {
               itemsPrices[item.id] = [];
             }
 
-            if (!!auction?.buyout) {
+            if (auction?.buyout) {
               itemsPrices[item.id].push({ id, buyout: auction.buyout / 10000, realms });
             }
           } catch (error) {
@@ -195,9 +200,24 @@ const startQueries = async () => {
         });
       });
 
+      const reports: string[] = [];
+
       for (const [itemId, item] of Object.entries(itemsPrices)) {
-        const [{ id: crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const currentItemInfo = itemsColl.find((item) => item.id === parseInt(itemId));
+
+        if (currentItemInfo) {
+          reports.push(
+            formatCheapestReport(currentItemInfo, {
+              listings: item,
+              totalRealms: auctionRealms.length,
+              isCommodity: IS_COMMODITY,
+            }),
+          );
+        }
+
+        if (!item.length) continue;
+
+        const [{ id: _crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const allServerPrices = item.reduce(
           (acc, { id, ...rest }) => ({ ...acc, [id]: rest }),
           {} as Record<string, RealmsBuyoutPrice>,
@@ -206,27 +226,29 @@ const startQueries = async () => {
         if (currentItemInfo) {
           currentItemInfo.prices = { cheapest, all: allServerPrices };
 
-          writeToFile(
+          await writeToFile(
             currentItemInfo,
             `./data/auctions/${itemId}-${kebabCase(currentItemInfo.name)}.json`,
           );
         }
       }
+
+      console.log(`\n${reports.join("\n\n")}`);
       break;
     }
     case "-i":
       const item = await grabItemInfo(LOCAL_ITEM_ID, true);
 
-      writeToFile(item, `./data/items/${LOCAL_ITEM_ID}-${kebabCase(item.name)}.json`);
+      await writeToFile(item, `./data/items/${LOCAL_ITEM_ID}-${kebabCase(item.name)}.json`);
       break;
     case "-r": {
       try {
         const realmsResponse = await Promise.allSettled<{ id: number; realms: string[] }>(
           CONNECTED_REALM_IDS.map((crID) => {
-            const url = craftWoWURLWithToken("realms", { crID });
+            const url = craftWoWURL("realms", { crID });
 
-            return fetch(url, DEFAULT_HEADERS)
-              .then((res) => res.json())
+            return fetch(url, REQUEST_INIT)
+              .then((res) => res.json() as Promise<{ id: number; realms: { slug: string }[] }>)
               .then((res) => ({ id: res.id, realms: res.realms.map(({ slug }) => slug) }));
           }),
         );
@@ -239,7 +261,7 @@ const startQueries = async () => {
           .filter((item) => item.status === "fulfilled")
           .map((item) => item.value);
 
-        writeToFile(realmsData, "./data/realms.json");
+        await writeToFile(realmsData, "./data/realms.json");
       } catch (error) {
         console.log(error);
       }
@@ -252,7 +274,7 @@ const startQueries = async () => {
 };
 
 const parseLocalItemId = (itemId: string) => {
-  if (/^(\d{6,6})(,\d{6,6})+?$/) {
+  if (/^\d+(,\d+)+$/.test(itemId)) {
     LOCAL_ITEM_IDS = itemId.split(",").map((id) => parseInt(id));
   } else {
     LOCAL_ITEM_ID = parseInt(itemId);
@@ -273,4 +295,4 @@ if (process.argv.length === 3) {
   DEBUG_LEVEL = parseInt(process.argv.at(-1)) || 0;
 }
 
-startQueries();
+await startQueries();

@@ -1,0 +1,17 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{ts,js,json,yml,yaml,css,html}"
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    lint:
+      glob: "*.{ts,js}"
+      run: pnpm exec oxlint --type-aware {staged_files}
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: pnpm typecheck
+    test:
+      run: pnpm test

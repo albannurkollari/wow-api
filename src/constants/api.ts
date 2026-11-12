@@ -7,7 +7,6 @@ export const DEFAULT_HEADERS = {
 } as const;
 
 // PARAMETER NAMES
-export const ACCESS_TOKEN = "access_token";
 export const LOCALE = "locale";
 export const LOCALES = {
   EN_GB: "en_GB",

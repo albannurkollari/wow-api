@@ -15,7 +15,7 @@ type EnvVars = {
   CURRENT_ACCESS_TOKEN: string;
 };
 
-const currentEnvConfig = dotenv.config({ path: ".env.local" }).parsed as EnvVars;
+const currentEnvConfig = dotenv.config({ path: ".env.local", quiet: true }).parsed as EnvVars;
 const { CLIENT_ID, CLIENT_SECRET } = currentEnvConfig;
 
 const setClientAccessToken = async (): Promise<void> => {
@@ -34,12 +34,12 @@ const setClientAccessToken = async (): Promise<void> => {
 
     writeFileSync(".env.local", configText, "utf-8");
 
-    console.log("-----------------------------------------")
+    console.log("-----------------------------------------");
     console.log("| ✅ New client token successfully set! |");
-    console.log("-----------------------------------------")
+    console.log("-----------------------------------------");
   } catch (error) {
     console.error(error);
   }
 };
 
-setClientAccessToken();
+await setClientAccessToken();

@@ -1,0 +1,20 @@
+name: "Setup Node & pnpm"
+description: "Setup Node & pnpm (version from packageManager) with a cached store"
+runs:
+  using: "composite"
+  steps:
+    # Corepack is no longer bundled from Node 25 on, so pnpm comes from the
+    # action instead; it reads the exact version from package.json#packageManager.
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v6
+      with:
+        cache: true
+
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24
+
+    - name: Install dependencies (no scripts)
+      shell: bash
+      run: pnpm install --frozen-lockfile --ignore-scripts
