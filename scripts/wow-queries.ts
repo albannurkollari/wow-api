@@ -252,7 +252,7 @@ const startQueries = async () => {
 };
 
 const parseLocalItemId = (itemId: string) => {
-  if (/^(\d{6,6})(,\d{6,6})+?$/) {
+  if (/^\d+(,\d+)+$/.test(itemId)) {
     LOCAL_ITEM_IDS = itemId.split(",").map((id) => parseInt(id));
   } else {
     LOCAL_ITEM_ID = parseInt(itemId);
