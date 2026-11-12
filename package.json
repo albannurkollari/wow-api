@@ -30,6 +30,9 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint --type-aware",
     "lint:fix": "oxlint --type-aware --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
     "nodeTS": "node",
     "nodeTS:debug": "node --inspect-brk",
@@ -38,12 +41,14 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
     "change-case": "^5.4.4",
     "dotenv": "^18.0.10",
     "oxfmt": "^0.78.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2006",
     "typescript": "^7.0.2",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   }
 }
