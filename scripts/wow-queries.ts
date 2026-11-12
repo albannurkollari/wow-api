@@ -139,7 +139,10 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
   return fetch(url, DEFAULT_HEADERS)
     .then((response) => response.json())
     .then((data) => ({ ...data, id, realms }))
-    .catch(console.error);
+    .catch((error) => {
+      console.error(error);
+      return { id, realms, auctions: [] };
+    });
 };
 
 const grabItemInfo = async (id: number = LOCAL_ITEM_ID, rawInfo = false): Promise<ItemInfo> => {
