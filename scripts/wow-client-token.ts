@@ -42,4 +42,4 @@ const setClientAccessToken = async (): Promise<void> => {
   }
 };
 
-setClientAccessToken();
+await setClientAccessToken();

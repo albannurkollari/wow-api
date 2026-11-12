@@ -137,7 +137,7 @@ const getAllAuctions = ({ id, realms }: Partial<RealmsWithId> = {}): Promise<
 > => {
   const method = IS_COMMODITY ? "commodities" : "auctions";
   const url = craftWoWURLWithToken(method, { crID: id });
-  DEBUG_LEVEL > 0 && console.log(url);
+  if (DEBUG_LEVEL > 0) console.log(url);
 
   return fetch(url, DEFAULT_HEADERS)
     .then((response) => response.json() as Promise<{ auctions: any[] }>)
@@ -157,7 +157,7 @@ const grabItemInfo = async (id: number = LOCAL_ITEM_ID, rawInfo = false): Promis
     if (rawInfo) return result;
 
     return { id, name, description, prices: {} };
-  } catch (error) {}
+  } catch {}
 };
 
 const startQueries = async () => {
@@ -167,7 +167,7 @@ const startQueries = async () => {
       let item: ItemInfo | undefined;
       let items: ItemInfo[] | undefined;
 
-      if (!!LOCAL_ITEM_IDS?.length) {
+      if (LOCAL_ITEM_IDS?.length) {
         items = await Promise.all(LOCAL_ITEM_IDS.map((id) => grabItemInfo(id)));
         items.forEach((item) => {
           console.log(`--> Fetching prices across all EU servers for item:\n ${item.name}!\n`);
@@ -177,7 +177,7 @@ const startQueries = async () => {
         console.log(`--> Fetching prices across all EU servers for item:\n ${item.name}!\n`);
       }
 
-      const itemsColl = !!items ? items : [item];
+      const itemsColl = items ? items : [item];
       const itemsPrices = {} as Record<string, (RealmsBuyoutPrice & { id: number })[]>;
       const auctionRealms = IS_COMMODITY ? [CONNECTED_REALMS[0]] : CONNECTED_REALMS;
       const auctionsData = await Promise.all(auctionRealms.map(getAllAuctions));
@@ -191,7 +191,7 @@ const startQueries = async () => {
               itemsPrices[item.id] = [];
             }
 
-            if (!!auction?.buyout) {
+            if (auction?.buyout) {
               itemsPrices[item.id].push({ id, buyout: auction.buyout / 10000, realms });
             }
           } catch (error) {
@@ -202,7 +202,7 @@ const startQueries = async () => {
       });
 
       for (const [itemId, item] of Object.entries(itemsPrices)) {
-        const [{ id: crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
+        const [{ id: _crId, ...cheapest }] = item.sort((a, b) => a.buyout - b.buyout);
         const currentItemInfo = itemsColl.find((item) => item.id === parseInt(itemId));
         const allServerPrices = item.reduce(
           (acc, { id, ...rest }) => ({ ...acc, [id]: rest }),
@@ -212,7 +212,7 @@ const startQueries = async () => {
         if (currentItemInfo) {
           currentItemInfo.prices = { cheapest, all: allServerPrices };
 
-          writeToFile(
+          await writeToFile(
             currentItemInfo,
             `./data/auctions/${itemId}-${kebabCase(currentItemInfo.name)}.json`,
           );
@@ -223,7 +223,7 @@ const startQueries = async () => {
     case "-i":
       const item = await grabItemInfo(LOCAL_ITEM_ID, true);
 
-      writeToFile(item, `./data/items/${LOCAL_ITEM_ID}-${kebabCase(item.name)}.json`);
+      await writeToFile(item, `./data/items/${LOCAL_ITEM_ID}-${kebabCase(item.name)}.json`);
       break;
     case "-r": {
       try {
@@ -245,7 +245,7 @@ const startQueries = async () => {
           .filter((item) => item.status === "fulfilled")
           .map((item) => item.value);
 
-        writeToFile(realmsData, "./data/realms.json");
+        await writeToFile(realmsData, "./data/realms.json");
       } catch (error) {
         console.log(error);
       }
@@ -279,4 +279,4 @@ if (process.argv.length === 3) {
   DEBUG_LEVEL = parseInt(process.argv.at(-1)) || 0;
 }
 
-startQueries();
+await startQueries();
