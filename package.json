@@ -44,6 +44,7 @@
     "@vitest/coverage-v8": "^5.1.0",
     "change-case": "^5.4.4",
     "dotenv": "^18.0.10",
+    "lefthook": "^2.2.2",
     "oxfmt": "^0.78.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2006",
