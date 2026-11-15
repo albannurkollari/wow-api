@@ -1,32 +1,33 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { createRateLimiter } from "./rate-limiter.ts";
+import { useFakeClock } from "../clock.fixture.ts";
+import { type RateLimiter, createRateLimiter } from "./rate-limiter.ts";
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-describe("createRateLimiter", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
+/** Schedules `count` instant tasks and resolves with when each started, relative to now. */
+const recordStartTimes = async (limiter: RateLimiter, count: number, runFor: number) => {
+  const startedAt: number[] = [];
+  const t0 = Date.now();
+  const tasks = Array.from({ length: count }, () =>
+    limiter.schedule(async () => {
+      startedAt.push(Date.now() - t0);
+    }),
+  );
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  await vi.advanceTimersByTimeAsync(runFor);
+  await Promise.all(tasks);
+
+  return startedAt;
+};
+
+describe("createRateLimiter", () => {
+  useFakeClock();
 
   it("spaces task starts evenly by the per-second rate", async () => {
     const limiter = createRateLimiter({ maxPerSecond: 5, maxConcurrent: 10 });
-    const startedAt: number[] = [];
-    const t0 = Date.now();
 
-    const tasks = [1, 2, 3].map(() =>
-      limiter.schedule(async () => {
-        startedAt.push(Date.now() - t0);
-      }),
-    );
-    await vi.advanceTimersByTimeAsync(1000);
-    await Promise.all(tasks);
-
-    expect(startedAt).toEqual([0, 200, 400]);
+    expect(await recordStartTimes(limiter, 3, 1000)).toEqual([0, 200, 400]);
   });
 
   it("never runs more tasks at once than allowed", async () => {
@@ -50,18 +51,9 @@ describe("createRateLimiter", () => {
 
   it("pauses and halves the rate after a penalty", async () => {
     const limiter = createRateLimiter({ maxPerSecond: 4, maxConcurrent: 10 });
-    const startedAt: number[] = [];
-    const t0 = Date.now();
 
     limiter.penalize(1000);
-    const tasks = [1, 2].map(() =>
-      limiter.schedule(async () => {
-        startedAt.push(Date.now() - t0);
-      }),
-    );
-    await vi.advanceTimersByTimeAsync(3000);
-    await Promise.all(tasks);
 
-    expect(startedAt).toEqual([1000, 1500]);
+    expect(await recordStartTimes(limiter, 2, 3000)).toEqual([1000, 1500]);
   });
 });

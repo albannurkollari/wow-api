@@ -1,33 +1,28 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
+import { useFakeClock } from "../clock.fixture.ts";
+import { buildTokenResponse, createFakeFetch } from "./api.fixture.ts";
 import { createTokenProvider } from "./auth.ts";
 
-const tokenResponse = (accessToken: string, expiresIn = 86399) =>
-  Response.json({ access_token: accessToken, expires_in: expiresIn });
+const createProvider = (fetch: typeof globalThis.fetch, clientSecret = "secret") =>
+  createTokenProvider({ clientId: "id", clientSecret, fetch });
 
 describe("createTokenProvider", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  useFakeClock();
 
   it("requests a token with the client credentials", async () => {
-    const fetch = vi.fn<typeof globalThis.fetch>(async () => tokenResponse("first"));
-    const tokens = createTokenProvider({ clientId: "id", clientSecret: "secret", fetch });
+    const fetch = createFakeFetch(buildTokenResponse("first"));
 
-    expect(await tokens.get()).toBe("first");
+    expect(await createProvider(fetch).get()).toBe("first");
 
-    const [, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
-    expect(init.headers).toMatchObject({ authorization: `Basic ${btoa("id:secret")}` });
-    expect(init.body).toBe("grant_type=client_credentials");
+    const [, init] = fetch.mock.calls[0];
+    expect(init?.headers).toMatchObject({ authorization: `Basic ${btoa("id:secret")}` });
+    expect(init?.body).toBe("grant_type=client_credentials");
   });
 
   it("reuses the token and shares one request between concurrent callers", async () => {
-    const fetch = vi.fn<typeof globalThis.fetch>(async () => tokenResponse("first"));
-    const tokens = createTokenProvider({ clientId: "id", clientSecret: "secret", fetch });
+    const fetch = createFakeFetch(buildTokenResponse("first"));
+    const tokens = createProvider(fetch);
 
     await Promise.all([tokens.get(), tokens.get()]);
     await tokens.get();
@@ -36,11 +31,11 @@ describe("createTokenProvider", () => {
   });
 
   it("renews the token shortly before it expires", async () => {
-    const fetch = vi
-      .fn<typeof globalThis.fetch>()
-      .mockResolvedValueOnce(tokenResponse("first", 3600))
-      .mockResolvedValueOnce(tokenResponse("second", 3600));
-    const tokens = createTokenProvider({ clientId: "id", clientSecret: "secret", fetch });
+    const fetch = createFakeFetch(
+      buildTokenResponse("first", 3600),
+      buildTokenResponse("second", 3600),
+    );
+    const tokens = createProvider(fetch);
 
     await tokens.get();
     vi.advanceTimersByTime(56 * 60_000);
@@ -49,11 +44,8 @@ describe("createTokenProvider", () => {
   });
 
   it("renews the token after it is invalidated", async () => {
-    const fetch = vi
-      .fn<typeof globalThis.fetch>()
-      .mockResolvedValueOnce(tokenResponse("first"))
-      .mockResolvedValueOnce(tokenResponse("second"));
-    const tokens = createTokenProvider({ clientId: "id", clientSecret: "secret", fetch });
+    const fetch = createFakeFetch(buildTokenResponse("first"), buildTokenResponse("second"));
+    const tokens = createProvider(fetch);
 
     await tokens.get();
     tokens.invalidate();
@@ -62,11 +54,10 @@ describe("createTokenProvider", () => {
   });
 
   it("fails loudly when the credentials are rejected", async () => {
-    const fetch = vi.fn<typeof globalThis.fetch>(
-      async () => new Response(null, { status: 401, statusText: "Unauthorized" }),
-    );
-    const tokens = createTokenProvider({ clientId: "id", clientSecret: "wrong", fetch });
+    const fetch = createFakeFetch(new Response(null, { status: 401, statusText: "Unauthorized" }));
 
-    await expect(tokens.get()).rejects.toThrow("Access token request failed: 401 Unauthorized");
+    await expect(createProvider(fetch, "wrong").get()).rejects.toThrow(
+      "Access token request failed: 401 Unauthorized",
+    );
   });
 });

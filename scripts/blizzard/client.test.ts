@@ -1,22 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
+import {
+  SNAPSHOT_TIMES,
+  createFakeFetch,
+  createFakeLimiter,
+  createFakeTokens,
+} from "./api.fixture.ts";
 import { createBlizzardClient } from "./client.ts";
-import type { RateLimiter } from "./rate-limiter.ts";
-
-const SNAPSHOT = "Sun, 15 Nov 2026 10:22:12 GMT";
 
 const setup = (...responses: Response[]) => {
-  const fetch = vi.fn<typeof globalThis.fetch>();
-  responses.forEach((response) => fetch.mockResolvedValueOnce(response));
-
-  const tokens = {
-    get: vi.fn<() => Promise<string>>(async () => "token"),
-    invalidate: vi.fn<() => void>(),
-  };
-  const limiter: RateLimiter = {
-    schedule: (task) => task(),
-    penalize: vi.fn<(pauseMs: number) => void>(),
-  };
+  const fetch = createFakeFetch(...responses);
+  const tokens = createFakeTokens();
+  const limiter = createFakeLimiter();
   const client = createBlizzardClient({ tokens, limiter, fetch });
 
   const requestAt = (index: number) => {
@@ -26,6 +21,9 @@ const setup = (...responses: Response[]) => {
 
   return { client, fetch, tokens, limiter, requestAt };
 };
+
+const tooManyRequests = (headers?: Record<string, string>) =>
+  new Response(null, { status: 429, statusText: "Too Many Requests", headers });
 
 describe("createBlizzardClient", () => {
   it("sends the token as a Bearer header with the namespace and locale", async () => {
@@ -42,16 +40,16 @@ describe("createBlizzardClient", () => {
 
   it("asks only for changes since the last snapshot", async () => {
     const { client, requestAt } = setup(
-      new Response(null, { status: 304, headers: { "last-modified": SNAPSHOT } }),
+      new Response(null, { status: 304, headers: { "last-modified": SNAPSHOT_TIMES.current } }),
     );
 
     const response = await client.get("/connected-realm/581/auctions", {
       namespace: "dynamic",
-      ifModifiedSince: SNAPSHOT,
+      ifModifiedSince: SNAPSHOT_TIMES.current,
     });
 
-    expect(response).toEqual({ status: 304, lastModified: SNAPSHOT });
-    expect(requestAt(0).headers["if-modified-since"]).toBe(SNAPSHOT);
+    expect(response).toEqual({ status: 304, lastModified: SNAPSHOT_TIMES.current });
+    expect(requestAt(0).headers["if-modified-since"]).toBe(SNAPSHOT_TIMES.current);
   });
 
   it("renews the token once when it is rejected", async () => {
@@ -67,10 +65,7 @@ describe("createBlizzardClient", () => {
   });
 
   it("backs off for as long as Blizzard asks after a 429", async () => {
-    const { client, limiter } = setup(
-      new Response(null, { status: 429, headers: { "retry-after": "2" } }),
-      Response.json({ ok: true }),
-    );
+    const { client, limiter } = setup(tooManyRequests({ "retry-after": "2" }), Response.json({}));
 
     await client.get("/item/1", { namespace: "static" });
 
@@ -78,7 +73,7 @@ describe("createBlizzardClient", () => {
   });
 
   it("backs off for a minute when a 429 has no retry-after", async () => {
-    const { client, limiter } = setup(new Response(null, { status: 429 }), Response.json({}));
+    const { client, limiter } = setup(tooManyRequests(), Response.json({}));
 
     await client.get("/item/1", { namespace: "static" });
 
@@ -86,8 +81,12 @@ describe("createBlizzardClient", () => {
   });
 
   it("gives up after repeated 429s", async () => {
-    const tooMany = () => new Response(null, { status: 429, statusText: "Too Many Requests" });
-    const { client, fetch } = setup(tooMany(), tooMany(), tooMany(), tooMany());
+    const { client, fetch } = setup(
+      tooManyRequests(),
+      tooManyRequests(),
+      tooManyRequests(),
+      tooManyRequests(),
+    );
 
     await expect(client.get("/item/1", { namespace: "static" })).rejects.toThrow(
       "GET /item/1 failed: 429 Too Many Requests",
