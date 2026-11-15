@@ -34,6 +34,57 @@ We will run a watcher on our own machine that waits for each new snapshot, check
 6. **Any number of receivers, Discord first.** Every receiver takes the same alert. Discord gets it through a channel webhook, and the Discord app turns it into a phone push notification. The console is the default receiver. `NOTIFIERS` lists the active ones, and adding a receiver such as SMS or WhatsApp doesn't change the watcher.
 7. **The keys stay with us.** The client ID, client secret and webhook URL live in `.env.local`, which git ignores (Terms of Use 2.12).
 
+### The flow, start to finish
+
+Each dotted arrow is a request to Blizzard, and every request goes through one rate limiter: at most 5 per second and 4 at once, and after a `429` it pauses as long as Blizzard asks and halves its pace. With `--once`, the watcher stops after the first check instead of waiting.
+
+```mermaid
+flowchart TD
+  subgraph machine["💻 Your machine: pnpm watch:ah"]
+    start([Start]) --> load["Load keys from .env.local<br/>and items from watchlist.json"]
+    load --> token["Get an access token"]
+    token --> names["Look up item names"]
+    names --> hello["Tell every receiver:<br/>watch started"]
+    hello --> due{"Swept less than<br/>10 min ago?"}
+    due -- yes --> w1(["↺ Wait 60 s"])
+    due -- no --> ask["Ask one realm: anything<br/>new since the last snapshot?"]
+    ask --> fresh{"New snapshot?"}
+    fresh -- "no (304)" --> w2(["↺ Wait 60 s"])
+    fresh -- yes --> sweep["Read the other ~91 realms<br/>and the commodity market"]
+    sweep --> deals{"Listings at or<br/>under your price?"}
+    deals -- no --> w3(["↺ Wait 60 s"])
+    deals -- yes --> seen{"Reported<br/>before?"}
+    seen -- "all of them" --> w4(["↺ Wait 60 s"])
+    seen -- "some are new" --> alert["One alert: grouped by item and realm,<br/>cheapest first, crediting Blizzard"]
+    alert --> send["Send to every receiver in NOTIFIERS"]
+    send --> console["Console"]
+    send --> w5(["↺ Wait 60 s"])
+  end
+
+  subgraph blizzard["🐉 Blizzard"]
+    oauth["Battle.net OAuth"]
+    api["WoW Game Data API<br/>new auction snapshot about hourly"]
+  end
+
+  subgraph discord["💬 Discord"]
+    webhook["Channel webhook"] --> message["Message in your channel"]
+  end
+
+  subgraph phone["📱 Your phone"]
+    push["Push notification"]
+  end
+
+  token <-. "once a day, renewed 5 min early" .-> oauth
+  names <-. "1 request per item" .-> api
+  ask <-. "1 request" .-> api
+  sweep <-. "~92 requests, 5 per second, 4 at once" .-> api
+  send --> webhook
+  message --> push
+
+  classDef wait fill:#eef,stroke:#88a,stroke-dasharray:3 3
+  class w1,w2,w3,w4,w5 wait
+```
+
 ## Consequences
 
 - An alert reaches us within about a minute of Blizzard publishing a snapshot, and the first sweep of a fresh snapshot takes about 20 seconds.
