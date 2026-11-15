@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { SAMPLE_ALERT } from "./alert.fixture.ts";
 import { createDiscordNotifier } from "./discord.ts";
 
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1/token";
+const BARE_ALERT = { title: "Title", lines: [] };
 
 const setup = (response = new Response(null, { status: 204 })) => {
   const fetch = vi.fn<typeof globalThis.fetch>(async () => response);
@@ -16,7 +18,7 @@ describe("createDiscordNotifier", () => {
   it("posts the alert to the webhook as an embed", async () => {
     const { notifier, fetch, sentBody } = setup();
 
-    await notifier.send({ title: "Title", lines: ["one", "two"], footer: "Footer" });
+    await notifier.send(SAMPLE_ALERT);
 
     expect(fetch.mock.calls[0][0]).toBe(WEBHOOK_URL);
     expect(sentBody()).toEqual({
@@ -28,7 +30,7 @@ describe("createDiscordNotifier", () => {
   it("leaves the footer out when there is none", async () => {
     const { notifier, sentBody } = setup();
 
-    await notifier.send({ title: "Title", lines: [] });
+    await notifier.send(BARE_ALERT);
 
     expect(sentBody().embeds[0]).not.toHaveProperty("footer");
   });
@@ -47,7 +49,7 @@ describe("createDiscordNotifier", () => {
   it("fails with Discord's reason when the webhook rejects the message", async () => {
     const { notifier } = setup(new Response('{"message": "Unknown Webhook"}', { status: 404 }));
 
-    await expect(notifier.send({ title: "Title", lines: [] })).rejects.toThrow(
+    await expect(notifier.send(BARE_ALERT)).rejects.toThrow(
       'Discord webhook failed: 404 {"message": "Unknown Webhook"}',
     );
   });

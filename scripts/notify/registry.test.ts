@@ -1,23 +1,19 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { SAMPLE_ALERT } from "./alert.fixture.ts";
 import { createConsoleNotifier } from "./console.ts";
 import { createNotifiers, notifyAll, requireEnv } from "./registry.ts";
-import type { Alert, Notifier } from "./types.ts";
+import type { Notifier } from "./types.ts";
 
-const alert: Alert = { title: "Title", lines: ["one", "two"], footer: "Footer" };
-
-const fakeNotifier = (
-  name: string,
-  send: Notifier["send"] = vi.fn<Notifier["send"]>(async () => {}),
-) => ({
+const createFakeNotifier = (name: string, send = vi.fn<Notifier["send"]>(async () => {})) => ({
   name,
   send,
 });
 
 describe("createNotifiers", () => {
   const factories = {
-    first: () => fakeNotifier("first"),
-    second: () => fakeNotifier("second"),
+    first: () => createFakeNotifier("first"),
+    second: () => createFakeNotifier("second"),
   };
 
   it("builds every listed notifier, ignoring spaces and empty entries", () => {
@@ -35,14 +31,17 @@ describe("createNotifiers", () => {
 
 describe("notifyAll", () => {
   it("delivers to every notifier even when one fails", async () => {
-    const failing = fakeNotifier("failing", async () => {
-      throw new Error("offline");
-    });
-    const working = fakeNotifier("working");
+    const failing = createFakeNotifier(
+      "failing",
+      vi.fn<Notifier["send"]>(async () => {
+        throw new Error("offline");
+      }),
+    );
+    const working = createFakeNotifier("working");
 
-    const failures = await notifyAll([failing, working], alert);
+    const failures = await notifyAll([failing, working], SAMPLE_ALERT);
 
-    expect(working.send).toHaveBeenCalledWith(alert);
+    expect(working.send).toHaveBeenCalledWith(SAMPLE_ALERT);
     expect(failures).toEqual([{ notifier: "failing", error: new Error("offline") }]);
   });
 });
@@ -58,7 +57,7 @@ describe("createConsoleNotifier", () => {
   it("prints the title, lines and footer", async () => {
     const log = vi.fn<(message: string) => void>();
 
-    await createConsoleNotifier(log).send(alert);
+    await createConsoleNotifier(log).send(SAMPLE_ALERT);
 
     expect(log).toHaveBeenCalledWith("Title\none\ntwo\nFooter");
   });
