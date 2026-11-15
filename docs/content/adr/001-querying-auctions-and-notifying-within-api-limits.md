@@ -1,12 +1,12 @@
 ---
-title: Hearing About Cheap Auctions Without Risking API Access
+title: Querying Auctions and Notifying About Cheap Listings Within the API Limits
 status: Accepted
 date: 2026-11-15
 audience: Engineering
 summary: A local watcher checks once a minute for a new hourly auction snapshot, reads every EU auction house only when one appears, and pushes cheap listings to Discord.
 ---
 
-# Hearing About Cheap Auctions Without Risking API Access
+# Querying Auctions and Notifying About Cheap Listings Within the API Limits
 
 ## Status
 
@@ -30,7 +30,7 @@ We will run a watcher on our own machine that waits for each new snapshot, check
 2. **We ask whether a new snapshot exists, not for the data.** Once a minute (`POLL_INTERVAL_SECONDS`, never under 30 seconds) the watcher sends one conditional request for a single realm. Until Blizzard publishes, the answer is an empty `304`.
 3. **We read every auction house only when a new snapshot is out.** Then it downloads each EU connected realm once, plus the commodity market when the list includes commodities. It never does this more than once every 10 minutes.
 4. **We stay at about 0.4 % of the hourly limit.** That comes to about 155 requests per hour. The watcher sends at most 5 requests per second and keeps at most 4 in flight. After a `429` it waits as long as Blizzard asks (or a minute) and halves its pace.
-5. **We hear about each listing once, in one message per snapshot.** The message groups listings at or under the price by item and realm, cheapest first. The watcher remembers which listings it has reported for 48 hours, the longest an auction can run. Each message credits Blizzard as the source of the data (Terms of Use 2.13).
+5. **The watcher notifies about each listing once, in one message per snapshot.** The message groups listings at or under the price by item and realm, cheapest first. The watcher remembers which listings it has reported for 48 hours, the longest an auction can run. Each message credits Blizzard as the source of the data (Terms of Use 2.13).
 6. **Any number of receivers, Discord first.** Every receiver takes the same alert. Discord gets it through a channel webhook, and the Discord app turns it into a phone push notification. The console is the default receiver. `NOTIFIERS` lists the active ones, and adding a receiver such as SMS or WhatsApp doesn't change the watcher.
 7. **The keys stay with us.** The client ID, client secret and webhook URL live in `.env.local`, which git ignores (Terms of Use 2.12).
 
