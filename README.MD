@@ -27,7 +27,7 @@ and linted on commit, and the typecheck and tests run on push.
 `pnpm watch:ah` keeps running and checks once a minute whether Blizzard has published a new
 auction snapshot (about once an hour). When it has, it reads every EU connected realm, and the
 commodity market if you watch commodities, and alerts you about listings at or under your prices.
-Each listing is reported once. `--once` runs a single check and exits.
+It reports each listing once. `--once` runs a single check and exits.
 
 It stays far inside the API limits, see [docs/blizzard-api-limits.md](docs/blizzard-api-limits.md).
 
@@ -54,10 +54,10 @@ that channel's notifications to "All Messages" in the Discord app.
 
 ### Adding a receiver
 
-Receivers live in `scripts/notify/`. Implement the `Notifier` type from `types.ts` (a name and a
-`send(alert)` function) and register a factory for it in `registry.ts`. It can then be listed in
+Receivers live in `scripts/notify/`. Write an object of the `Notifier` type from `types.ts` (a name and a
+`send(alert)` function) and register a factory for it in `registry.ts`. You can then list it in
 `NOTIFIERS` next to the others.
 
-## Last but not least
+## Before you go
 
 ![unagi](https://media4.giphy.com/media/JOe7JxOiMg61ogl6fH/giphy.gif)

@@ -20,7 +20,7 @@ Source: [Getting Started → Throttling](https://community.developer.battle.net/
 
 - Client credentials tokens last 24 hours (`expires_in: 86399`).
 - Every API response includes a `blizzard-token-expires` header.
-- No limit on requesting tokens is published.
+- Blizzard publishes no limit on requesting tokens.
 
 Source: [Client Credentials Flow](https://community.developer.battle.net/documentation/guides/using-oauth/client-credentials-flow).
 
@@ -41,7 +41,7 @@ From the [Blizzard Developer API Terms of Use](https://www.blizzard.com/en-us/le
 - **2.12** Keep the client ID and secret confidential.
 - **2.13** Credit Blizzard as the source of the data.
 - **2.9** Do not sell or transfer the data to third parties.
-- **2.18** Cached data must be refreshed or dropped within 30 days.
+- **2.18** Refresh or drop cached data within 30 days.
 
 Nothing in the terms links API use to a game account. The risk of overuse is losing API access.
 
