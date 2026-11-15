@@ -20,11 +20,13 @@ export const createDiscordNotifier = ({
   fetch: doFetch = fetch,
 }: DiscordNotifierOptions): Notifier => ({
   name: "discord",
-  send: async ({ title, lines, footer }) => {
+  send: async ({ title, lines, footer, time }) => {
     const embed = {
       title: truncate(title, MAX_TITLE),
       description: truncate(lines.join("\n"), MAX_DESCRIPTION),
       ...(footer && { footer: { text: truncate(footer, MAX_FOOTER) } }),
+      // Discord shows this in each reader's own time zone, next to the footer.
+      ...(time && { timestamp: time.toISOString() }),
     };
     const response = await doFetch(webhookUrl, {
       method: "POST",

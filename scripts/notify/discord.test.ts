@@ -35,6 +35,14 @@ describe("createDiscordNotifier", () => {
     expect(sentBody().embeds[0]).not.toHaveProperty("footer");
   });
 
+  it("sends the time for Discord to show in the reader's time zone", async () => {
+    const { notifier, sentBody } = setup();
+
+    await notifier.send({ ...BARE_ALERT, time: new Date("2026-11-15T19:22:12Z") });
+
+    expect(sentBody().embeds[0].timestamp).toBe("2026-11-15T19:22:12.000Z");
+  });
+
   it("trims text to Discord's embed limits", async () => {
     const { notifier, sentBody } = setup();
 
