@@ -4,6 +4,7 @@ type TokenProviderOptions = {
   clientId: string;
   clientSecret: string;
   fetch?: typeof fetch;
+  log?: (message: string) => void;
 };
 
 export type TokenProvider = {
@@ -19,6 +20,7 @@ export const createTokenProvider = ({
   clientId,
   clientSecret,
   fetch: doFetch = fetch,
+  log = () => {},
 }: TokenProviderOptions): TokenProvider => {
   let token: string | undefined;
   let expiresAt = 0;
@@ -33,6 +35,7 @@ export const createTokenProvider = ({
       },
       body: "grant_type=client_credentials",
     });
+    log(`POST ${TOKEN_URL} → ${response.status}`);
 
     if (!response.ok) {
       throw new Error(`Access token request failed: ${response.status} ${response.statusText}`);

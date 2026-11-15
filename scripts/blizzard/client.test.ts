@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   SNAPSHOT_TIMES,
@@ -12,14 +12,15 @@ const setup = (...responses: Response[]) => {
   const fetch = createFakeFetch(...responses);
   const tokens = createFakeTokens();
   const limiter = createFakeLimiter();
-  const client = createBlizzardClient({ tokens, limiter, fetch });
+  const log = vi.fn<(message: string) => void>();
+  const client = createBlizzardClient({ tokens, limiter, fetch, log });
 
   const requestAt = (index: number) => {
     const [url, init] = fetch.mock.calls[index];
     return { url: (url as URL).href, headers: init?.headers as Record<string, string> };
   };
 
-  return { client, fetch, tokens, limiter, requestAt };
+  return { client, fetch, tokens, limiter, log, requestAt };
 };
 
 const tooManyRequests = (headers?: Record<string, string>) =>
@@ -92,6 +93,17 @@ describe("createBlizzardClient", () => {
       "GET /item/1 failed: 429 Too Many Requests",
     );
     expect(fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it("logs every attempt with its status and duration", async () => {
+    const { client, log } = setup(tooManyRequests({ "retry-after": "1" }), Response.json({}));
+
+    await client.get("/item/1", { namespace: "static" });
+
+    expect(log.mock.calls).toEqual([
+      [expect.stringMatching(/^GET \/item\/1 → 429 in \d+ ms$/)],
+      [expect.stringMatching(/^GET \/item\/1 → 200 in \d+ ms$/)],
+    ]);
   });
 
   it("reports other errors with the response body", async () => {

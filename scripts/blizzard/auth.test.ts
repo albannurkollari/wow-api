@@ -20,6 +20,20 @@ describe("createTokenProvider", () => {
     expect(init?.body).toBe("grant_type=client_credentials");
   });
 
+  it("logs each token request", async () => {
+    const log = vi.fn<(message: string) => void>();
+    const tokens = createTokenProvider({
+      clientId: "id",
+      clientSecret: "secret",
+      fetch: createFakeFetch(buildTokenResponse("first")),
+      log,
+    });
+
+    await tokens.get();
+
+    expect(log).toHaveBeenCalledWith("POST https://oauth.battle.net/oauth/token → 200");
+  });
+
   it("reuses the token and shares one request between concurrent callers", async () => {
     const fetch = createFakeFetch(buildTokenResponse("first"));
     const tokens = createProvider(fetch);

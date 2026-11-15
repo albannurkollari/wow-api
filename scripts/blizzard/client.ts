@@ -10,6 +10,7 @@ type ClientOptions = {
   region?: Region;
   locale?: string;
   fetch?: typeof fetch;
+  log?: (message: string) => void;
 };
 
 type GetOptions = { namespace: Namespace; ifModifiedSince?: string };
@@ -31,6 +32,7 @@ export const createBlizzardClient = ({
   region = "eu",
   locale = "en_GB",
   fetch: doFetch = fetch,
+  log = () => {},
 }: ClientOptions): BlizzardClient => {
   const send = async (path: string, { namespace, ifModifiedSince }: GetOptions) => {
     const url = new URL(`https://${region}.api.blizzard.com/data/wow${path}`);
@@ -41,8 +43,10 @@ export const createBlizzardClient = ({
 
     // The body is read inside the slot so large auction dumps count toward the concurrency cap.
     return limiter.schedule(async () => {
+      const startedAt = Date.now();
       const response = await doFetch(url, { headers });
       const data: unknown = response.ok ? await response.json() : await response.text();
+      log(`GET ${path} → ${response.status} in ${Date.now() - startedAt} ms`);
 
       return { response, data };
     });
