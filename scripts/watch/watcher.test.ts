@@ -25,16 +25,18 @@ const setup = (watchlist: WatchedItem[] = [WATCHED.spellthread]) => {
   const { client, get, queue } = createFakeClient();
   const notify = vi.fn<Notifier["send"]>(async () => {});
   const log = vi.fn<(message: string) => void>();
+  const onSnapshot = vi.fn<(lastModified: string | undefined) => Promise<void>>(async () => {});
   const watcher = createAuctionWatcher({
     client,
     watchlist,
     connectedRealms: CONNECTED_REALMS,
     itemNames: ITEM_NAMES,
     notify,
+    onSnapshot,
     log,
   });
 
-  return { watcher, get, notify, log, queue };
+  return { watcher, get, notify, log, onSnapshot, queue };
 };
 
 describe("createAuctionWatcher", () => {
@@ -73,6 +75,20 @@ describe("createAuctionWatcher", () => {
       namespace: "dynamic",
       ifModifiedSince: SNAPSHOT_TIMES.current,
     });
+  });
+
+  it("reports each new snapshot once, before sweeping it", async () => {
+    const { watcher, get, onSnapshot, queue } = setup();
+    queue(BLACKROCK, buildAuctionSnapshot([]), { status: 304 });
+    queue(DENTARG, buildAuctionSnapshot([]));
+
+    await watcher.check();
+    vi.advanceTimersByTime(MIN_SWEEP_INTERVAL_MS);
+    await watcher.check();
+
+    expect(onSnapshot).toHaveBeenCalledTimes(1);
+    expect(onSnapshot).toHaveBeenCalledWith(SNAPSHOT_TIMES.current);
+    expect(onSnapshot.mock.invocationCallOrder[0]).toBeLessThan(get.mock.invocationCallOrder[1]);
   });
 
   it("does not report the same listing twice", async () => {

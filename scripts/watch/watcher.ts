@@ -19,6 +19,8 @@ type WatcherOptions = {
   connectedRealms: readonly ConnectedRealm[];
   itemNames: ReadonlyMap<number, string>;
   notify: (alert: Alert) => Promise<void>;
+  /** Called with each new snapshot's Last-Modified time, before the sweep. */
+  onSnapshot?: (lastModified: string | undefined) => Promise<void>;
   log?: (message: string) => void;
 };
 
@@ -31,6 +33,7 @@ export const createAuctionWatcher = ({
   connectedRealms,
   itemNames,
   notify,
+  onSnapshot,
   log = console.log,
 }: WatcherOptions) => {
   const realmItems = watchlist.filter(({ commodity }) => !commodity);
@@ -86,6 +89,7 @@ export const createAuctionWatcher = ({
 
       lastSweepAt = Date.now();
       lastSnapshot = response.lastModified;
+      await onSnapshot?.(lastSnapshot);
 
       const deals = [...dealsIn(sentinel, response.data.auctions), ...(await sweepOthers())];
       const fresh = tracker.takeFresh(deals);
