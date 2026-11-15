@@ -1,83 +1,55 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { type Auction, type Deal, createDealTracker, findDeals } from "./deals.ts";
+import { useFakeClock } from "../clock.fixture.ts";
+import { COPPER, ITEMS, PLACES, WATCHED, buildAuction, buildDeal } from "./auctions.fixture.ts";
+import { createDealTracker, findDeals } from "./deals.ts";
 
-const SPELLTHREAD = 258123;
-const MYCOBLOOM = 210796;
-const blackrock = { connectedRealmId: 581, realms: ["blackrock"] };
-
-const auction = (overrides: Partial<Auction>): Auction => ({
-  id: 1,
-  item: { id: SPELLTHREAD },
-  quantity: 1,
-  time_left: "VERY_LONG",
-  ...overrides,
-});
+const watchlist = [WATCHED.spellthread, WATCHED.mycobloom];
 
 describe("findDeals", () => {
-  const watchlist = [
-    { id: SPELLTHREAD, maxPrice: 30000, commodity: false },
-    { id: MYCOBLOOM, maxPrice: 15, commodity: true },
-  ];
-
   it("returns listings at or below the item's price, converted to gold", () => {
     const auctions = [
-      auction({ id: 1, buyout: 20_008_800 }),
-      auction({ id: 2, buyout: 300_000_000 }),
-      auction({ id: 3, buyout: 699_989_100 }),
+      buildAuction({ id: 1, buyout: COPPER.bargain }),
+      buildAuction({ id: 2, buyout: 300_000_000 }),
+      buildAuction({ id: 3, buyout: COPPER.market }),
     ];
 
-    expect(findDeals(auctions, watchlist, blackrock)).toEqual([
-      {
-        ...blackrock,
-        auctionId: 1,
-        itemId: SPELLTHREAD,
-        price: 2000.88,
-        quantity: 1,
-        timeLeft: "VERY_LONG",
-      },
-      {
-        ...blackrock,
-        auctionId: 2,
-        itemId: SPELLTHREAD,
-        price: 30000,
-        quantity: 1,
-        timeLeft: "VERY_LONG",
-      },
+    expect(findDeals(auctions, watchlist, PLACES.blackrock)).toEqual([
+      buildDeal({ auctionId: 1, price: 2000.88 }),
+      buildDeal({ auctionId: 2, price: 30000 }),
     ]);
   });
 
   it("compares the price of a single item in a stack", () => {
-    const auctions = [auction({ buyout: 400_000_000, quantity: 2 })];
+    const auctions = [buildAuction({ buyout: 400_000_000, quantity: 2 })];
 
-    expect(findDeals(auctions, watchlist, blackrock)).toMatchObject([{ price: 20000 }]);
+    expect(findDeals(auctions, watchlist, PLACES.blackrock)).toMatchObject([{ price: 20000 }]);
   });
 
   it("uses the unit price for commodities", () => {
-    const auctions = [auction({ item: { id: MYCOBLOOM }, unit_price: 120_000, quantity: 200 })];
+    const auctions = [
+      buildAuction({ item: { id: ITEMS.mycobloom }, unit_price: 120_000, quantity: 200 }),
+    ];
 
-    expect(findDeals(auctions, watchlist, { realms: [] })).toMatchObject([
-      { itemId: MYCOBLOOM, price: 12, quantity: 200 },
+    expect(findDeals(auctions, watchlist, PLACES.commodityMarket)).toMatchObject([
+      { itemId: ITEMS.mycobloom, price: 12, quantity: 200 },
     ]);
   });
 
   it("skips bid-only auctions and items that aren't watched", () => {
-    const auctions = [auction({ buyout: undefined }), auction({ item: { id: 1 }, buyout: 1 })];
+    const auctions = [
+      buildAuction({ buyout: undefined }),
+      buildAuction({ item: { id: 1 }, buyout: 1 }),
+    ];
 
-    expect(findDeals(auctions, watchlist, blackrock)).toEqual([]);
+    expect(findDeals(auctions, watchlist, PLACES.blackrock)).toEqual([]);
   });
 });
 
 describe("createDealTracker", () => {
-  const deal = (auctionId: number) => ({ auctionId }) as Deal;
+  useFakeClock();
 
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  const deal = (auctionId: number) => buildDeal({ auctionId });
 
   it("reports a listing only the first time it is seen", () => {
     const tracker = createDealTracker();

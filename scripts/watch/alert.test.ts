@@ -1,39 +1,21 @@
 import { describe, expect, it } from "vitest";
 
+import { SNAPSHOT_TIMES } from "../blizzard/api.fixture.ts";
 import { formatDealsAlert } from "./alert.ts";
-import type { Deal } from "./deals.ts";
+import { ITEMS, ITEM_NAMES, PLACES, buildDeal } from "./auctions.fixture.ts";
 
-const itemNames = new Map([
-  [258123, "Pattern: Sunfire Silk Spellthread"],
-  [210796, "Mycobloom"],
-]);
-
-const deal = (overrides: Partial<Deal>): Deal => ({
-  auctionId: 1,
-  itemId: 258123,
-  price: 2000.88,
-  quantity: 1,
-  timeLeft: "VERY_LONG",
-  connectedRealmId: 581,
-  realms: ["blackrock"],
-  ...overrides,
-});
+const CREDIT = "Data from Blizzard Entertainment";
 
 describe("formatDealsAlert", () => {
   it("lists deals cheapest first and credits Blizzard", () => {
     const alert = formatDealsAlert(
       [
-        deal({
-          price: 25000,
-          connectedRealmId: 1084,
-          realms: ["dentarg", "tarren-mill"],
-          timeLeft: "SHORT",
-        }),
-        deal({ itemId: 210796, price: 12, quantity: 200, connectedRealmId: undefined, realms: [] }),
-        deal({}),
+        buildDeal({ ...PLACES.dentargTarrenMill, price: 25000, timeLeft: "SHORT" }),
+        buildDeal({ ...PLACES.commodityMarket, itemId: ITEMS.mycobloom, price: 12, quantity: 200 }),
+        buildDeal(),
       ],
-      itemNames,
-      "Sun, 15 Nov 2026 10:22:12 GMT",
+      ITEM_NAMES,
+      SNAPSHOT_TIMES.current,
     );
 
     expect(alert).toEqual({
@@ -43,28 +25,28 @@ describe("formatDealsAlert", () => {
         "Pattern: Sunfire Silk Spellthread: 2,000.88g on Blackrock, 12 – 48 h left",
         "Pattern: Sunfire Silk Spellthread: 25,000g on Dentarg / Tarren Mill, under 30 min left",
       ],
-      footer: "Snapshot Sun, 15 Nov 2026 10:22:12 GMT · Data from Blizzard Entertainment",
+      footer: `Snapshot ${SNAPSHOT_TIMES.current} · ${CREDIT}`,
     });
   });
 
   it("falls back to the item ID when the name is unknown", () => {
-    const alert = formatDealsAlert([deal({ itemId: 1 })], itemNames);
+    const alert = formatDealsAlert([buildDeal({ itemId: 1 })], ITEM_NAMES);
 
     expect(alert.title).toBe("🔔 1 cheap listing");
     expect(alert.lines[0]).toMatch(/^Item 1: /);
-    expect(alert.footer).toBe("Data from Blizzard Entertainment");
+    expect(alert.footer).toBe(CREDIT);
   });
 
   it("sums listings of the same item in the same place into one line", () => {
-    const commodity = { itemId: 210796, connectedRealmId: undefined, realms: [] };
+    const mycobloom = { ...PLACES.commodityMarket, itemId: ITEMS.mycobloom };
     const alert = formatDealsAlert(
       [
-        deal({ ...commodity, auctionId: 1, price: 3.38, quantity: 9 }),
-        deal({ ...commodity, auctionId: 2, price: 3.2, quantity: 1200 }),
-        deal({ auctionId: 3, price: 2000.88 }),
-        deal({ auctionId: 4, price: 2500 }),
+        buildDeal({ ...mycobloom, auctionId: 1, price: 3.38, quantity: 9 }),
+        buildDeal({ ...mycobloom, auctionId: 2, price: 3.2, quantity: 1200 }),
+        buildDeal({ auctionId: 3, price: 2000.88 }),
+        buildDeal({ auctionId: 4, price: 2500 }),
       ],
-      itemNames,
+      ITEM_NAMES,
     );
 
     expect(alert.title).toBe("🔔 4 cheap listings");
@@ -76,10 +58,10 @@ describe("formatDealsAlert", () => {
 
   it("caps the list and says how many were left out", () => {
     const deals = Array.from({ length: 23 }, (_, index) =>
-      deal({ auctionId: index, connectedRealmId: index }),
+      buildDeal({ auctionId: index, connectedRealmId: index }),
     );
 
-    const { lines } = formatDealsAlert(deals, itemNames);
+    const { lines } = formatDealsAlert(deals, ITEM_NAMES);
 
     expect(lines).toHaveLength(21);
     expect(lines.at(-1)).toBe("…and 3 more");
