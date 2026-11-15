@@ -38,7 +38,8 @@
     "nodeTS": "node",
     "nodeTS:debug": "node --inspect-brk",
     "setClientAccessToken": "pnpm nodeTS scripts/wow-client-token.ts",
-    "query": "pnpm nodeTS scripts/wow-queries.ts"
+    "query": "pnpm nodeTS scripts/wow-queries.ts",
+    "watch:ah": "pnpm nodeTS scripts/ah-watch.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
