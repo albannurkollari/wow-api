@@ -1,4 +1,5 @@
 import { createConsoleNotifier } from "./console.ts";
+import { createDiscordNotifier } from "./discord.ts";
 import type { Alert, Notifier } from "./types.ts";
 
 type Env = Record<string, string | undefined>;
@@ -14,6 +15,7 @@ export const requireEnv = (env: Env, key: string) => {
 // Adding a receiver means adding a factory here; nothing else needs to know about it.
 export const NOTIFIER_FACTORIES: Record<string, NotifierFactory> = {
   console: () => createConsoleNotifier(),
+  discord: (env) => createDiscordNotifier({ webhookUrl: requireEnv(env, "DISCORD_WEBHOOK_URL") }),
 };
 
 export const createNotifiers = (
