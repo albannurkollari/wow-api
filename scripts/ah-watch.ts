@@ -8,6 +8,7 @@ import { createRateLimiter } from "./blizzard/rate-limiter.ts";
 import { createNotifiers, notifyAll, requireEnv } from "./notify/registry.ts";
 import type { Alert } from "./notify/types.ts";
 import { formatGold } from "./report.ts";
+import { createSnapshotLog } from "./watch/snapshot-log.ts";
 import { createAuctionWatcher } from "./watch/watcher.ts";
 import { loadWatchlist } from "./watch/watchlist.ts";
 
@@ -46,12 +47,17 @@ const itemNames = new Map(
 const watched = watchlist.map(
   ({ id, maxPrice }) => `${itemNames.get(id)} at ≤ ${formatGold(maxPrice)}`,
 );
+const logSnapshot = createSnapshotLog(env.SNAPSHOT_LOG ?? "snapshots.csv");
 const watcher = createAuctionWatcher({
   client,
   watchlist,
   connectedRealms: CONNECTED_REALMS,
   itemNames,
   notify,
+  onSnapshot: (lastModified) =>
+    logSnapshot(lastModified).catch((error: unknown) =>
+      console.error("⚠️ Could not log the snapshot:", error),
+    ),
 });
 
 console.log(

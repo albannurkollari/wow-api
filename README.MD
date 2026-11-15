@@ -43,8 +43,12 @@ It stays far inside the API limits, see [docs/blizzard-api-limits.md](docs/blizz
    | `DISCORD_WEBHOOK_URL`   |                  | Webhook for the `discord` receiver          |
    | `WATCHLIST`             | `watchlist.json` | Path to the watchlist                       |
    | `POLL_INTERVAL_SECONDS` | `60`             | Seconds between checks (at least 30)        |
+   | `SNAPSHOT_LOG`          | `snapshots.csv`  | CSV of each snapshot's publish and seen time |
 
    The watcher fetches and renews its own access token from the client ID and secret.
+
+Each new snapshot adds a row to `snapshots.csv`: when Blizzard published it and when the watcher
+noticed. A week of rows shows whether snapshots arrive at a steady minute past the hour.
 
 ### Discord
 
