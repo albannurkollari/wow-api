@@ -12,6 +12,11 @@ const TIME_LEFT: Record<string, string> = {
 };
 const MAX_LINES = 20;
 
+const formatAge = (ms: number) => {
+  const minutes = Math.max(0, Math.floor(ms / 60_000));
+  return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`;
+};
+
 type DealGroup = { cheapest: Deal; available: number };
 
 // The commodity market lists every seller's stack separately, which would flood the alert.
@@ -51,18 +56,25 @@ export const formatDealsAlert = (
   deals: readonly Deal[],
   itemNames: ReadonlyMap<number, string>,
   snapshot?: string,
+  now = new Date(),
 ): Alert => {
+  const time = snapshot ? new Date(snapshot) : undefined;
   const groups = groupByItemAndPlace(deals);
   const lines = groups.slice(0, MAX_LINES).map((group) => describeGroup(group, itemNames));
 
   if (groups.length > MAX_LINES) lines.push(`…and ${groups.length - MAX_LINES} more`);
 
   return {
-    title: `🔔 ${deals.length} cheap listing${deals.length === 1 ? "" : "s"}`,
-    lines,
-    // The Developer API Terms (2.13) require crediting Blizzard as the data source.
-    footer: [snapshot && `Snapshot ${snapshot}`, "Data from Blizzard Entertainment"]
+    // The age goes in the title because phone notifications show little else.
+    title: [
+      `🔔 ${deals.length} cheap listing${deals.length === 1 ? "" : "s"}`,
+      time && `snapshot ${formatAge(now.getTime() - time.getTime())} old`,
+    ]
       .filter(Boolean)
       .join(" · "),
+    lines,
+    // The Developer API Terms (2.13) require crediting Blizzard as the data source.
+    footer: "Data from Blizzard Entertainment",
+    time,
   };
 };

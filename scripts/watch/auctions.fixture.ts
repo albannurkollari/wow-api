@@ -27,6 +27,9 @@ export const CONNECTED_REALMS = [PLACES.blackrock, PLACES.dentargTarrenMill].map
 );
 
 /** Real Spellthread buyouts in copper, seen on Blackrock on 2026-11-15. */
+/** When an alert for the current snapshot goes out, 26 minutes after Blizzard published it. */
+export const ALERTED_AT = new Date("2026-11-15T10:48:12Z");
+
 export const COPPER = { bargain: 20_008_800, market: 699_989_100 } as const;
 
 export const buildAuction = (overrides: Partial<Auction> = {}): Auction => ({

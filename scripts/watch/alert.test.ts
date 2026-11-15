@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { SNAPSHOT_TIMES } from "../blizzard/api.fixture.ts";
 import { formatDealsAlert } from "./alert.ts";
-import { ITEMS, ITEM_NAMES, PLACES, buildDeal } from "./auctions.fixture.ts";
+import { ALERTED_AT, ITEMS, ITEM_NAMES, PLACES, buildDeal } from "./auctions.fixture.ts";
 
 const CREDIT = "Data from Blizzard Entertainment";
 
@@ -16,17 +16,30 @@ describe("formatDealsAlert", () => {
       ],
       ITEM_NAMES,
       SNAPSHOT_TIMES.current,
+      ALERTED_AT,
     );
 
     expect(alert).toEqual({
-      title: "🔔 3 cheap listings",
+      title: "🔔 3 cheap listings · snapshot 26 min old",
       lines: [
         "Mycobloom: from 12g on the commodity market, 200 available",
         "Pattern: Sunfire Silk Spellthread: 2,000.88g on Blackrock, 12 – 48 h left",
         "Pattern: Sunfire Silk Spellthread: 25,000g on Dentarg / Tarren Mill, under 30 min left",
       ],
-      footer: `Snapshot ${SNAPSHOT_TIMES.current} · ${CREDIT}`,
+      footer: CREDIT,
+      time: new Date(SNAPSHOT_TIMES.current),
     });
+  });
+
+  it("gives the snapshot's age in hours once it passes an hour", () => {
+    const alert = formatDealsAlert(
+      [buildDeal()],
+      ITEM_NAMES,
+      SNAPSHOT_TIMES.current,
+      new Date("2026-11-15T12:05:12Z"),
+    );
+
+    expect(alert.title).toBe("🔔 1 cheap listing · snapshot 1 h 43 min old");
   });
 
   it("falls back to the item ID when the name is unknown", () => {

@@ -4,6 +4,7 @@ import { SNAPSHOT_TIMES, createFakeClient } from "../blizzard/api.fixture.ts";
 import { useFakeClock } from "../clock.fixture.ts";
 import type { Notifier } from "../notify/types.ts";
 import {
+  ALERTED_AT,
   CONNECTED_REALMS,
   COPPER,
   ITEMS,
@@ -43,6 +44,7 @@ describe("createAuctionWatcher", () => {
   useFakeClock();
 
   it("sweeps every connected realm on a new snapshot and reports the deals", async () => {
+    vi.setSystemTime(ALERTED_AT);
     const { watcher, notify, queue } = setup();
     queue(BLACKROCK, buildAuctionSnapshot([listing(1, COPPER.bargain)]));
     queue(DENTARG, buildAuctionSnapshot([listing(2, 250_000_000), listing(3, COPPER.market)]));
@@ -51,12 +53,13 @@ describe("createAuctionWatcher", () => {
 
     expect(notify).toHaveBeenCalledTimes(1);
     expect(notify).toHaveBeenCalledWith({
-      title: "🔔 2 cheap listings",
+      title: "🔔 2 cheap listings · snapshot 26 min old",
       lines: [
         "Pattern: Sunfire Silk Spellthread: 2,000.88g on Blackrock, 12 – 48 h left",
         "Pattern: Sunfire Silk Spellthread: 25,000g on Dentarg / Tarren Mill, 12 – 48 h left",
       ],
-      footer: `Snapshot ${SNAPSHOT_TIMES.current} · ${CREDIT}`,
+      footer: CREDIT,
+      time: new Date(SNAPSHOT_TIMES.current),
     });
   });
 
@@ -110,7 +113,7 @@ describe("createAuctionWatcher", () => {
     expect(notify).toHaveBeenCalledTimes(2);
     expect(notify).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        title: "🔔 1 cheap listing",
+        title: expect.stringMatching(/^🔔 1 cheap listing · /),
         lines: ["Pattern: Sunfire Silk Spellthread: 10,000g on Blackrock, 12 – 48 h left"],
       }),
     );
