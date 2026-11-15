@@ -20,13 +20,17 @@ const once = process.argv.includes("--once");
 const MIN_POLL_SECONDS = 30;
 const pollMs = Math.max(MIN_POLL_SECONDS, Number(env.POLL_INTERVAL_SECONDS) || 60) * 1000;
 
+const log = (message: string) =>
+  console.log(`[${new Date().toLocaleTimeString("en-GB")}] ${message}`);
+
 const tokens = createTokenProvider({
   clientId: requireEnv(env, "CLIENT_ID"),
   clientSecret: requireEnv(env, "CLIENT_SECRET"),
+  log,
 });
 // Far below Blizzard's 100 per second, see docs/blizzard-api-limits.md.
 const limiter = createRateLimiter({ maxPerSecond: 5, maxConcurrent: 4 });
-const client = createBlizzardClient({ tokens, limiter });
+const client = createBlizzardClient({ tokens, limiter, log });
 const notifiers = createNotifiers(env.NOTIFIERS ?? "console", env);
 const watchlist = await loadWatchlist(env.WATCHLIST ?? "watchlist.json");
 
@@ -54,6 +58,7 @@ const watcher = createAuctionWatcher({
   connectedRealms: CONNECTED_REALMS,
   itemNames,
   notify,
+  log,
   onSnapshot: (lastModified) =>
     logSnapshot(lastModified).catch((error: unknown) =>
       console.error("⚠️ Could not log the snapshot:", error),
