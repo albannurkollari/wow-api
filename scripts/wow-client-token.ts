@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+
+import { setEnvValue } from "./env-file.ts";
 
 type AccessTokenResponse = {
   access_token: string;
@@ -29,10 +31,13 @@ const setClientAccessToken = async (): Promise<void> => {
       body: "grant_type=client_credentials",
     });
     const { access_token } = (await response.json()) as AccessTokenResponse;
-    currentEnvConfig.CURRENT_ACCESS_TOKEN = access_token;
-    const configText = new URLSearchParams(currentEnvConfig).toString().replace(/&/g, "\n");
+    const envText = readFileSync(".env.local", "utf-8");
 
-    writeFileSync(".env.local", configText, "utf-8");
+    writeFileSync(
+      ".env.local",
+      setEnvValue(envText, "CURRENT_ACCESS_TOKEN", access_token),
+      "utf-8",
+    );
 
     console.log("-----------------------------------------");
     console.log("| ✅ New client token successfully set! |");
