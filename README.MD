@@ -18,7 +18,7 @@ and linted on commit, and the typecheck and tests run on push.
 | `pnpm test`                 | Run the Vitest suites (`test:watch`, `test:coverage`) |
 | `pnpm lint`                 | Type-aware lint with oxlint (`lint:fix` to autofix)   |
 | `pnpm format`               | Format with oxfmt (`format:check` to only check)      |
-| `pnpm setClientAccessToken` | Fetch a Battle.net client token into `.env.local`     |
+| `pnpm wow-token`           | Fetch a Battle.net client token into `.env.local`     |
 | `pnpm query <ids> [-a\|-c\|-i\|-r]` | Query auctions, commodities, items or realms  |
 | `pnpm watch:ah [--once]`    | Watch every EU auction house and alert on cheap listings |
 
