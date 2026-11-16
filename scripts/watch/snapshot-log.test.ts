@@ -1,29 +1,23 @@
-import { mkdtemp, readFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readFile } from "node:fs/promises";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SNAPSHOT_TIMES } from "../blizzard/api.fixture.ts";
 import { useFakeClock } from "../clock.fixture.ts";
+import { useTempDir } from "../temp-dir.fixture.ts";
 import { createSnapshotLog } from "./snapshot-log.ts";
 
 const SEEN_AT = new Date("2026-11-15T10:22:40.000Z");
 
 describe("createSnapshotLog", () => {
   useFakeClock();
+  const pathTo = useTempDir("snapshot-log-");
 
-  let dir: string;
   let filePath: string;
   const readRows = async () => (await readFile(filePath, "utf-8")).trimEnd().split("\n");
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.setSystemTime(SEEN_AT);
-    dir = await mkdtemp(join(tmpdir(), "snapshot-log-"));
-    filePath = join(dir, "snapshots.csv");
-  });
-
-  afterEach(async () => {
-    await rm(dir, { recursive: true, force: true });
+    filePath = pathTo("snapshots.csv");
   });
 
   it("writes a header, then the publish and seen times of each snapshot", async () => {
