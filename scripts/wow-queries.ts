@@ -1,18 +1,18 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { format } from "oxfmt";
-import dotenv from "dotenv";
 
 import { CONNECTED_REALMS, CONNECTED_REALM_IDS } from "../src/constants/servers.ts";
 
 import { kebabCase } from "change-case";
 
+import { loadEnv } from "./env-file.ts";
 import { formatCheapestReport } from "./report.ts";
 
 // Constants
 import { DEFAULT_HEADERS, NAMESPACE, NAMESPACES, LOCALE, LOCALES } from "../src/constants/api.ts";
 import path from "node:path";
 
-dotenv.config({ path: ".env.local", quiet: true });
+loadEnv();
 
 type Namespace = "dynamic" | "static" | "profile";
 type Region = "eu" | "us";

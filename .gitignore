@@ -27,3 +27,7 @@ dist-ssr
 
 data
 coverage
+
+watchlist.json
+.vale/styles
+snapshots.csv

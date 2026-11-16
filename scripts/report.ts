@@ -3,7 +3,7 @@ import { capitalCase } from "change-case";
 type Listing = { id: number; buyout: number; realms?: string[] };
 type ReportOptions = { listings: Listing[]; totalRealms: number; isCommodity?: boolean };
 
-const formatGold = (gold: number) =>
+export const formatGold = (gold: number) =>
   `${gold.toLocaleString("en-GB", { maximumFractionDigits: 2 })}g`;
 
 export const formatCheapestReport = (

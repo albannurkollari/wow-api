@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": 258123, "maxPrice": 30000, "note": "Pattern: Sunfire Silk Spellthread" },
+    { "id": 210796, "maxPrice": 15, "commodity": true, "note": "Mycobloom" }
+  ]
+}
