@@ -5,6 +5,8 @@ type TokenProviderOptions = {
   clientSecret: string;
   fetch?: typeof fetch;
   log?: (message: string) => void;
+  /** Called with every new token, before anyone gets to use it. */
+  onRenew?: (token: string) => Promise<void>;
 };
 
 export type TokenProvider = {
@@ -21,6 +23,7 @@ export const createTokenProvider = ({
   clientSecret,
   fetch: doFetch = fetch,
   log = () => {},
+  onRenew,
 }: TokenProviderOptions): TokenProvider => {
   let token: string | undefined;
   let expiresAt = 0;
@@ -44,6 +47,7 @@ export const createTokenProvider = ({
     const { access_token, expires_in } = (await response.json()) as TokenResponse;
     token = access_token;
     expiresAt = Date.now() + expires_in * 1000;
+    await onRenew?.(access_token);
 
     return access_token;
   };

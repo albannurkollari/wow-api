@@ -34,6 +34,22 @@ describe("createTokenProvider", () => {
     expect(log).toHaveBeenCalledWith("POST https://oauth.battle.net/oauth/token → 200");
   });
 
+  it("hands every new token to onRenew", async () => {
+    const onRenew = vi.fn<(token: string) => Promise<void>>(async () => {});
+    const tokens = createTokenProvider({
+      clientId: "id",
+      clientSecret: "secret",
+      fetch: createFakeFetch(buildTokenResponse("first"), buildTokenResponse("second")),
+      onRenew,
+    });
+
+    await tokens.get();
+    tokens.invalidate();
+    await tokens.get();
+
+    expect(onRenew.mock.calls).toEqual([["first"], ["second"]]);
+  });
+
   it("reuses the token and shares one request between concurrent callers", async () => {
     const fetch = createFakeFetch(buildTokenResponse("first"));
     const tokens = createProvider(fetch);
