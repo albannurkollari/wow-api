@@ -1,16 +1,9 @@
+import { type Env, requireEnv } from "../env-file.ts";
 import { createConsoleNotifier } from "./console.ts";
 import { createDiscordNotifier } from "./discord.ts";
 import type { Alert, Notifier } from "./types.ts";
 
-type Env = Record<string, string | undefined>;
 type NotifierFactory = (env: Env) => Notifier;
-
-export const requireEnv = (env: Env, key: string) => {
-  const value = env[key];
-  if (!value) throw new Error(`Missing ${key} in .env.local`);
-
-  return value;
-};
 
 // Adding a receiver means adding a factory here; nothing else needs to know about it.
 export const NOTIFIER_FACTORIES: Record<string, NotifierFactory> = {

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SAMPLE_ALERT } from "./alert.fixture.ts";
 import { createConsoleNotifier } from "./console.ts";
-import { createNotifiers, notifyAll, requireEnv } from "./registry.ts";
+import { createNotifiers, notifyAll } from "./registry.ts";
 import type { Notifier } from "./types.ts";
 
 const createFakeNotifier = (name: string, send = vi.fn<Notifier["send"]>(async () => {})) => ({
@@ -43,13 +43,6 @@ describe("notifyAll", () => {
 
     expect(working.send).toHaveBeenCalledWith(SAMPLE_ALERT);
     expect(failures).toEqual([{ notifier: "failing", error: new Error("offline") }]);
-  });
-});
-
-describe("requireEnv", () => {
-  it("returns the value or says which key is missing", () => {
-    expect(requireEnv({ KEY: "value" }, "KEY")).toBe("value");
-    expect(() => requireEnv({}, "KEY")).toThrow("Missing KEY in .env.local");
   });
 });
 

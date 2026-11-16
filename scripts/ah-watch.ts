@@ -1,20 +1,18 @@
 import { setTimeout as sleep } from "node:timers/promises";
-import dotenv from "dotenv";
 
 import { CONNECTED_REALMS } from "../src/constants/servers.ts";
 import { createTokenProvider } from "./blizzard/auth.ts";
 import { createBlizzardClient } from "./blizzard/client.ts";
 import { createRateLimiter } from "./blizzard/rate-limiter.ts";
-import { createNotifiers, notifyAll, requireEnv } from "./notify/registry.ts";
+import { loadEnv, requireEnv } from "./env-file.ts";
+import { createNotifiers, notifyAll } from "./notify/registry.ts";
 import type { Alert } from "./notify/types.ts";
 import { formatGold } from "./report.ts";
 import { createSnapshotLog } from "./watch/snapshot-log.ts";
 import { createAuctionWatcher } from "./watch/watcher.ts";
 import { loadWatchlist } from "./watch/watchlist.ts";
 
-dotenv.config({ path: ".env.local", quiet: true });
-
-const env = process.env;
+const env = loadEnv();
 const once = process.argv.includes("--once");
 // Polling faster gains nothing: a new snapshot only appears about once an hour.
 const MIN_POLL_SECONDS = 30;
