@@ -1,50 +1,23 @@
+import { readFile, writeFile } from "node:fs/promises";
 import dotenv from "dotenv";
-import { readFileSync, writeFileSync } from "node:fs";
 
+import { createTokenProvider } from "./blizzard/auth.ts";
 import { setEnvValue } from "./env-file.ts";
+import { requireEnv } from "./notify/registry.ts";
 
-type AccessTokenResponse = {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  scope: string;
-  sub: string;
-};
+const ENV_PATH = ".env.local";
 
-type EnvVars = {
-  CLIENT_ID: string;
-  CLIENT_SECRET: string;
-  CURRENT_ACCESS_TOKEN: string;
-};
+dotenv.config({ path: ENV_PATH, quiet: true });
 
-const currentEnvConfig = dotenv.config({ path: ".env.local", quiet: true }).parsed as EnvVars;
-const { CLIENT_ID, CLIENT_SECRET } = currentEnvConfig;
+// Throws on a rejected request, so a failed login never reaches the file.
+const token = await createTokenProvider({
+  clientId: requireEnv(process.env, "CLIENT_ID"),
+  clientSecret: requireEnv(process.env, "CLIENT_SECRET"),
+}).get();
 
-const setClientAccessToken = async (): Promise<void> => {
-  try {
-    const credentials = `${CLIENT_ID}:${CLIENT_SECRET}`;
-    const contentType = "application/x-www-form-urlencoded";
-    const authorization = `Basic ${btoa(credentials)}`;
-    const response = await fetch("https://oauth.battle.net/oauth/token", {
-      method: "POST",
-      headers: { authorization, "content-type": contentType },
-      body: "grant_type=client_credentials",
-    });
-    const { access_token } = (await response.json()) as AccessTokenResponse;
-    const envText = readFileSync(".env.local", "utf-8");
+const envText = await readFile(ENV_PATH, "utf-8");
+await writeFile(ENV_PATH, setEnvValue(envText, "CURRENT_ACCESS_TOKEN", token), "utf-8");
 
-    writeFileSync(
-      ".env.local",
-      setEnvValue(envText, "CURRENT_ACCESS_TOKEN", access_token),
-      "utf-8",
-    );
-
-    console.log("-----------------------------------------");
-    console.log("| ✅ New client token successfully set! |");
-    console.log("-----------------------------------------");
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-await setClientAccessToken();
+console.log("-----------------------------------------");
+console.log("| ✅ New client token successfully set! |");
+console.log("-----------------------------------------");
