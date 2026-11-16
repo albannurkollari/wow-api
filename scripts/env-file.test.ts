@@ -23,6 +23,16 @@ describe("setEnvValue", () => {
     );
   });
 
+  it("replaces every copy of a duplicated key", () => {
+    expect(setEnvValue("TOKEN=a\nTOKEN=b\n", "TOKEN", "new")).toBe("TOKEN=new\nTOKEN=new\n");
+  });
+
+  it("keeps Windows line endings", () => {
+    expect(setEnvValue("TOKEN=old\r\nNOTIFIERS=console\r\n", "TOKEN", "new")).toBe(
+      "TOKEN=new\r\nNOTIFIERS=console\r\n",
+    );
+  });
+
   it("writes values with $ patterns literally", () => {
     expect(setEnvValue("TOKEN=old\n", "TOKEN", "a$&b")).toBe("TOKEN=a$&b\n");
   });
