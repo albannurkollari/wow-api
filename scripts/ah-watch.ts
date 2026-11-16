@@ -4,7 +4,7 @@ import { CONNECTED_REALMS } from "../src/constants/servers.ts";
 import { createTokenProvider } from "./blizzard/auth.ts";
 import { createBlizzardClient } from "./blizzard/client.ts";
 import { createRateLimiter } from "./blizzard/rate-limiter.ts";
-import { loadEnv, requireEnv } from "./env-file.ts";
+import { ENV_FILE, loadEnv, requireEnv, saveEnvValue } from "./env-file.ts";
 import { createNotifiers, notifyAll } from "./notify/registry.ts";
 import type { Alert } from "./notify/types.ts";
 import { formatGold } from "./report.ts";
@@ -25,6 +25,12 @@ const tokens = createTokenProvider({
   clientId: requireEnv(env, "CLIENT_ID"),
   clientSecret: requireEnv(env, "CLIENT_SECRET"),
   log,
+  // pnpm query reads the token from .env.local, so keep it fresh there.
+  onRenew: (token) =>
+    saveEnvValue("CURRENT_ACCESS_TOKEN", token).then(
+      () => log(`🔑 Saved the new access token to ${ENV_FILE}`),
+      (error: unknown) => console.error("⚠️ Could not save the access token:", error),
+    ),
 });
 // Far below Blizzard's 100 per second, see docs/blizzard-api-limits.md.
 const limiter = createRateLimiter({ maxPerSecond: 5, maxConcurrent: 4 });
